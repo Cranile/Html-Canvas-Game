@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <title>Game</title>
+</head>
+<body>
+    <div style="display: flex;align-content:flex-start;">
+        <canvas id="game" width="960" height="896" style="border: 1px solid black;"></canvas>
+        <div style="align-self:flex-start;">
+            <canvas id="blockPick" width="200" height="500" style="border: 1px solid black;align-self: flex-start;"></canvas>
+            <div style="margin-left: 10px;">
+                <button onclick="changeTileSpan(0)">Stone</button>
+                <button onclick="changeTileSpan(1)">Grass</button>
+                <button onclick="changeTileSpan(2);">Water</button>
+                <p>current tile :</p>
+                <span id="tile"></span> 
+                <br>
+                <button style="margin-top: 5px;" onclick="downloadMap()">Generate map file</button>
+                <a id="download" href="" onclick="cleanDownload()" target="_blank" style="display: none;"> Download Map</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script src="game.js"></script>
+</html>
