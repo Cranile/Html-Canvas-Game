@@ -3,7 +3,7 @@ tileset = new Image();
 tileset.src = tileSetURL;
 
 //size of map on tiles also take on count the scale of the map
-pickerMapW = 3, pickerMapH = 5,pickerMapTotal=0;
+pickerMapW = 5, pickerMapH = 8,pickerMapTotal=0;
 
 initTile = 0, endRow = 0;
 endTile = 0, initTileTotalW = 0;
@@ -12,16 +12,24 @@ ammountOfTiles = 0;
 
 blockPickerMap = [];
 
+function setPickerParams(){
+    
+    pickerCanvas = document.getElementById("blockPick");
+    pctx = pickerCanvas.getContext("2d");
+    let canvasSize = setCanvasSize(pickerMapW,pickerMapH,tileW,tileH,scale);
 
+    pickerCanvas.width = canvasSize[0];
+    pickerCanvas.height = canvasSize[1];
+    picker();
+}
 function picker(){
     ammountOfTiles = Object.keys(tileTypes).length - 1;
     pickerMapTotal = Math.ceil(ammountOfTiles / pickerMapW);
     endTile = (pickerMapW * pickerMapH) ;
     createTiles();
     //blockPick
-    console.log("picker");
-    pickerCanvas = document.getElementById("blockPick");
-    pctx = pickerCanvas.getContext("2d");
+    
+
 
     pctx.scale(scale,scale);
     pctx.imageSmoothingEnabled = false;
@@ -40,8 +48,8 @@ function drawPicker(){
                 
             if(tile === undefined || tile === null){
                 //if there is no block just leave a blank space
-                tile = tileTypes["null"];
-                //console.log(tile);
+                tile = tileTypes[0];
+                console.log("null: ",tile);
             }
             
             pctx.drawImage(tileset,

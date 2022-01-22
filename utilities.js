@@ -30,6 +30,13 @@ oncontextmenu = function(e){
     e.preventDefault();
 }
 
+function setCanvasSize(mapW,mapH,TilesW,TilesH,scale){
+    let canvasW = (mapW * TilesW) * scale;
+    let canvasH = (mapH * TilesH) * scale;
+    
+    return [canvasW,canvasH];
+}
+
 function mouseEnterCanvas(id){
     //console.log("enter: ",id);
     elementHover = id;
@@ -87,7 +94,7 @@ function getKeyByValue(object, value) {
     return Object.keys(object).find(key => object[key] === value);
 }
 
-function changeTileSpan (tile){
+function changeTileSpan (tile){    
     let tilespan = document.getElementById("tile");
     //change for whatever the "null" block is
     if(tile === "null" ){
@@ -118,8 +125,8 @@ function addNewTile(x,y,mapW){
         }
 }
 function removeTile(x,y,mapW){
-    console.log();
-    gameMapData[ toIndex(x,y, mapW) ] = "null";
+    console.log( toIndex(x,y, mapW) );
+    gameMapData[ toIndex(x,y, mapW) ] = 0;
 }
 
 function getClickContext(e){
@@ -184,4 +191,20 @@ function getLayersAmmount(x,y, mapW){
 
 function mainDownload(){
     downloadMap(gameMapData)
+}
+
+function createTileSetFromImg(){
+    console.log(tileset.width , " , ", tileset.height);
+    console.log(tileset.width / tileW);
+    console.log(tileset.height / tileH);
+    let ammounTileW = tileset.width / tileW;
+    let ammounTileH = tileset.height / tileH;
+    let totalTiles = ammounTileH * ammounTileW;
+    for(let y = 0; y < ammounTileH ; y++){
+        for(let x = 0; x < ammounTileW ; x++){
+            tileTypesTest[toIndex(x,y,ammounTileW)] =  { zIndex:0 ,name:"name "+toIndex(x,y,ammounTileW) , floor:floorType.path, 
+                sprite:[{x:x*tileW,y:y*tileH,zIndex:0,w:tileW,h:tileH}] , colour:"#999999"
+            }
+        }
+    }
 }
