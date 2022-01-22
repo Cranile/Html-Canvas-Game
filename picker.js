@@ -3,7 +3,7 @@ tileset = new Image();
 tileset.src = tileSetURL;
 
 //size of map on tiles also take on count the scale of the map
-pickerMapW = 5, pickerMapH = 8,pickerMapTotal=0;
+pickerMapW = 8, pickerMapH = 8,pickerMapTotal=0;
 
 initTile = 0, endRow = 0;
 endTile = 0, initTileTotalW = 0;

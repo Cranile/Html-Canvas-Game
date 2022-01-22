@@ -14,7 +14,7 @@ let tileW = 32, tileH = 32;
 //scale of the map
 scale = 2;
 //size of map on tiles
-let mapW = 14, mapH = 14;
+let mapW = 10, mapH = 10; //map height should not exceed screen height
 
 let currentSecond = 0, frameCount = 0, framesLastSecond = 0, lastFrameTime = 0;
 
@@ -24,23 +24,8 @@ elementHover = null;
 // TODO : user should be able to generate an automatic tileTypes with all the tiles on the uploaded tileSheet, then modify manually the data 
 // TODO : update dowwnload function to export : Map widht & height, tileSheet, scale, tiles size, floorTypes, zlevels, zcontents
 currentPickedTile = 0;
-let gameMap = [
-    2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 
-    0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 
-    0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 
-    0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 
-    0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1, 1, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 
-];
-let gameMapData = gameMap.slice(0);
+let gameMap = [];
+let gameMapData = [];
 // TODO : fix z content, add extra filter to be able to store more than 1 object on the same map position KEY
 let zLevels = 4;
 let zContents = new Map();
@@ -61,12 +46,15 @@ window.onload = function(){
     ctx = gameCanvas.getContext("2d");
     canvasSizes = setCanvasSize(mapW,mapH,tileW,tileH,scale);
 
+    if(gameMap.length <= 0){
+        gameMap = generateGameMap(mapW,mapH);
+        gameMapData = gameMap.slice(0);
+    }
     canvasW = canvasSizes[0];
     canvasH = canvasSizes[1];
 
     gameCanvas.width = canvasW;
     gameCanvas.height = canvasH;
-    
 
     ctx.scale(scale,scale); //SET THE SCALE FOR THE PROJECT
     fetch("./tileTypes.json")

@@ -208,3 +208,11 @@ function createTileSetFromImg(){
         }
     }
 }
+
+function generateGameMap(mapW,mapH){
+    let newMap = [];
+    for (i = 0; i < mapW*mapH; i++){
+        newMap[i] = 0;
+    }
+    return newMap;
+}
