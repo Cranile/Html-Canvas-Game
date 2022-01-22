@@ -9,17 +9,14 @@
 </head>
 <body>
     <div style="display: flex;align-content:flex-start;">
-        <canvas id="game" width="960" height="896" style="border: 1px solid black;"></canvas>
+        <canvas id="game" onmouseenter="mouseEnterCanvas('game')" onmouseleave="mouseLeaveCanvas('game')" width="960" height="896" style="border: 1px solid black;"></canvas>
         <div style="align-self:flex-start;">
-            <canvas id="blockPick" width="200" height="500" style="border: 1px solid black;align-self: flex-start;"></canvas>
+            <canvas id="blockPick" onmouseenter="mouseEnterCanvas('blockPick')" onmouseleave="mouseLeaveCanvas('blockPick')" width="192" height="320" style="border: 1px solid black;align-self: flex-start;"></canvas>
             <div style="margin-left: 10px;">
-                <button onclick="changeTileSpan(0)">Stone</button>
-                <button onclick="changeTileSpan(1)">Grass</button>
-                <button onclick="changeTileSpan(2);">Water</button>
                 <p>current tile :</p>
                 <span id="tile"></span> 
                 <br>
-                <button style="margin-top: 5px;" onclick="downloadMap()">Generate map file</button>
+                <button style="margin-top: 5px;" onclick="mainDownload()">Generate map file</button>
                 <a id="download" href="" onclick="cleanDownload()" target="_blank" style="display: none;"> Download Map</a>
             </div>
         </div>
@@ -27,4 +24,6 @@
 
 </body>
 <script src="game.js"></script>
+<script src="picker.js"></script>
+<script src="utilities.js"></script>
 </html>

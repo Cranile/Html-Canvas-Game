@@ -5,18 +5,23 @@
 //from x: 1952 && y: 1856  TO  x:191 && y:2632 THERE IS Characters  !!
 //from x: 576 && y: 2528  TO  x:191 && y:2632 THERE IS min humanoid chars  !!
 
-let tileSetURL = "./ProjectUtumno_full.png";
+tileSetURL = "./ProjectUtumno_full.png";
 var tileset = null;
 tileset = new Image();
 tileset.src = tileSetURL;
 //size of tiles on PX
 let tileW = 32, tileH = 32;
+//scale of the map
+scale = 2;
 //size of map on tiles
 let mapW = 15, mapH = 14;
 
-let currentSecond = 0, frameCount = 0, framesLastSecond = 0;
+let currentSecond = 0, frameCount = 0, framesLastSecond = 0, lastFrameTime = 0;
 
-let blockPickerMap;
+elementHover = null;
+// TODO : user should be able to import a json with map, scale, width, layer ammount & contents, and tileTypes
+// TODO : user should be able to generate an automatic tileTypes with all the tiles on the uploaded tileSheet, then modify manually the data 
+// TODO : update dowwnload function to export : Map widht & height, tileSheet, scale, tiles size, floorTypes, zlevels, zcontents
 currentPickedTile = 0;
 let gameMap = [
     2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
@@ -36,42 +41,71 @@ let gameMap = [
 ];
 let gameMapData = gameMap.slice(0);
 let zLevels = 4;
-tileSetPos = {
-    0 : {pos:{x:32,y:0,w:32,h:32}},
-    //brickStone1
-    1 : {pos:{x:288,y:128,w:32,h:32}},
-    2 : {pos:{x:1952,y:1856,w:32,h:32}},
-}
+let zContents = new Map();
 floorType = {
     solid : 0,
     path : 1,
-    water : 2,
-}
-tileTypes = {
-    0 : {colour:"#685b48",  floor:floorType.solid, sprite:[{x:320,y:128,w:32,h:32}] },
-    1 : {colour:"#5aa457",  floor:floorType.path, sprite:[{x:864,y:96,w:32,h:32}] },
-    2 : {colour:"#678fd9",  floor:floorType.water, sprite:[{x:32,y:736,w:32,h:32}] },
-};
-
-function toIndex(x, y)
-{
-	return((y * mapW) + x);
+    water : 2, //slow move
+    lava : 3, //damage per tick
 }
 
-window.onload = function(){    
-    let gameCanvas = document.getElementById("game");
+tileTypes = new Object();
+tileTypesTest = new Object();
+
+
+window.onload = function(){
+    gameCanvas = document.getElementById("game");
     ctx = gameCanvas.getContext("2d");
-    canvasOffset = gameCanvas.getBoundingClientRect();
+    
     canvasH = gameCanvas.height;
     canvasW = gameCanvas.width;
-    ctx.scale(2,2); //SET THE SCALE FOR THE PROJECT
-    
+
+    ctx.scale(scale,scale); //SET THE SCALE FOR THE PROJECT
+    fetch("./tileTypes.json")
+    .then(res => {
+        return res.json();
+    })
+    .then(jsonData => {tileTypes = jsonData;startGame()} )    
+}
+function startGame(){
+    console.log(tileTypes[0]);
     requestAnimationFrame(drawGame);
+    for(x in tileTypes){
+        tileTypes[x]['animated'] = tileTypes[x].sprite.length > 1 ? true : false;
+        if(tileTypes[x].animated){
+            let t = 0;
+            for(s in tileTypes[x].sprite){
+                tileTypes[x].sprite[s]['start'] = t;
+
+                t += tileTypes[x].sprite[s].d;
+                tileTypes[x].sprite[s]["end"] = t;                
+            }
+            tileTypes[x]["spriteDuration"] = t;
+        }
+    };
     changeTileSpan(0);
+    picker();
     ctx.font = "bold 10pt sans-serif";
+}
+function getFrame(sprite, duration, time, animated){
+    if(!animated){
+        return sprite[0];
+    }
+    time = time % duration;
+
+    for(x in sprite){
+        if(sprite[x].end >= time){
+            return sprite[x];
+        }
+    }
 }
 function drawGame(){
     if(ctx==null) {return;}
+
+    ctx.clearRect(0,0, canvasW, canvasH);
+    let currentFrameTime = Date.now();
+    let timeElapsed = lastFrameTime - lastFrameTime;
+
     let sec = Math.floor(Date.now()/1000);
     if(sec!=currentSecond){
         currentSecond = sec;
@@ -82,81 +116,61 @@ function drawGame(){
     }
     ctx.imageSmoothingEnabled = false; //this being true(default) makes images blurry
 
-    
-    for(let y = 0; y < mapH;y++){
-        for(let x = 0; x < mapW;x++){
-            switch(gameMapData[((y*mapW)+x)]){
-                case 0:
-                    var tile = tileTypes[gameMapData[toIndex(x,y)]];
-                    break;
-                case 1:
-                    var tile = tileTypes[gameMapData[toIndex(x,y)]];
-                    break;
-                default:
-                    var tile = tileTypes[gameMapData[toIndex(x,y)]];
-            }
-            ctx.drawImage(tileset,
-				tile.sprite[0].x, tile.sprite[0].y, tile.sprite[0].w, tile.sprite[0].h,
-				(x*tileW),  (y*tileH),
-				tileW, tileH);
-
-            ctx.fillStyle = "#ff0000";
-            ctx.font = "bold 5pt sans-serif";
-            ctx.fillStyle = "#ff0000";
-            ctx.fillText(toIndex(x,y),(x*tileW) +10 , (y*tileH)+14);
-
-
-        }
-    }
-    ctx.fillStyle = "#ff0000";
-	ctx.fillText("FPS: " + framesLastSecond, 10, 20);
-    requestAnimationFrame(drawGame);
-	
-}
-
-onmousedown = function(e){
-        let posx = (e.pageX - canvasOffset.left)/2;
-        let posy = (e.pageY - canvasOffset.top)/2;            
+    for(let z = 0; z < 4;z++){
         for(let y = 0; y < mapH;y++){
             for(let x = 0; x < mapW;x++){
-                if(posx >= x*tileW && posx <= x*tileW + tileW){
-                    if(posy >= y*tileH && posy <= y*tileH + tileH){
-                        gameMapData[toIndex(x,y)] = currentPickedTile;
-                        
-                        break;
+                if(z === 0){
+                    switch(gameMapData[toIndex(x,y, mapW)]){
+                        case 0:
+                            var tile = tileTypes[gameMapData[toIndex(x,y, mapW)]];
+                            break;
+                        case 1:
+                            var tile = tileTypes[gameMapData[toIndex(x,y, mapW)]];
+                            break;
+                        default:
+                            var tile = tileTypes[gameMapData[toIndex(x,y, mapW)]];
+                            
+                    }
+                    let sprite = getFrame(tile.sprite, tile.spriteDuration, currentFrameTime, tile.animated);
+                    ctx.drawImage(tileset,
+                        sprite.x, sprite.y, sprite.w, sprite.h,
+                        (x*tileW),  (y*tileH),
+                        tileW, tileH);
+                }
+                if(z === 1 && zContents.size > 0){
+                    if(zContents.has( toIndex(x,y, mapW) )){
+                        var tile = tileTypes[zContents.get(toIndex(x,y, mapW))];
+                        //console.log("has", tileTypes[ zContents.get(toIndex(x,y, mapW)) ].name);
+                        let sprite = getFrame(tile.sprite, tile.spriteDuration, currentFrameTime, tile.animated);
+                        ctx.drawImage(tileset,
+                            sprite.x, sprite.y, sprite.w, sprite.h,
+                            (x*tileW),  (y*tileH),
+                            tileW, tileH);
                     }
                 }
-                
+                //ctx.font = "bold 5pt sans-serif";
+                //ctx.fillStyle = "#ff0000";
+                //ctx.fillText(toIndex(x,y, mapW),(x*tileW) +10 , (y*tileH)+14);
             }
         }
-    
-}
-function downloadMap(){
-    let map = JSON.stringify(gameMapData);
-    const blob = new Blob([map], {type:"octet-stream"});
-    let href = URL.createObjectURL(blob);
-    
-    let a = Object.assign(document.getElementById("download"), {
-        href, 
-        style:"display:block",
-        download:"map.json"
-    });
-    
-
-    
-}
-function cleanDownload(){
-    document.getElementById("download").style ="display:none";
-    URL.revokeObjectURL(href);
+    }
+        ctx.fillStyle = "#ff0000";
+        ctx.fillText("FPS: " + framesLastSecond, 10, 20);
+        requestAnimationFrame(drawGame);
 }
 
-
-function getKeyByValue(object, value) {
-    return Object.keys(object).find(key => object[key] === value);
-}
-
-function changeTileSpan (tile){
-    let tilespan = document.getElementById("tile");
-    currentPickedTile = tile;
-    tilespan.innerText = getKeyByValue(floorType,currentPickedTile) + " : " + currentPickedTile;
+function createTileSetFromImg(){
+    console.log(tileset.width , " , ", tileset.height);
+    console.log(tileset.width / tileW);
+    console.log(tileset.height / tileH);
+    let ammounTileW = tileset.width / tileW;
+    let ammounTileH = tileset.height / tileH;
+    let totalTiles = ammounTileH * ammounTileW;
+    for(let y = 0; y < ammounTileH ; y++){
+        for(let x = 0; x < ammounTileW ; x++){
+            tileTypesTest[toIndex(x,y,ammounTileW)] =  { colour:"#999999", name:toIndex(x,y,ammounTileW) , floor:floorType.path, 
+                sprite:[{x:x*tileW,y:y*tileH,zIndex:0,w:tileW,h:tileH}] 
+            }
+        }
+    }
 }
