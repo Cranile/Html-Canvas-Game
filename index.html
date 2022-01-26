@@ -12,10 +12,67 @@
         <canvas id="game" onmouseenter="mouseEnterCanvas('game')" onmouseleave="mouseLeaveCanvas('game')" width="100" height="100" style="border: 1px solid black;"></canvas>
         <div style="align-self:flex-start;">
             <canvas id="blockPick" onmouseenter="mouseEnterCanvas('blockPick')" onmouseleave="mouseLeaveCanvas('blockPick')" width="320" height="512" style="border: 1px solid black;align-self: flex-start;"></canvas>
+            
+        </div>
+        <div>
             <div style="margin-left: 10px;">
                 <p>current tile :</p>
-                <span id="tile"></span> 
+                <span id="tile"></span>
                 <br>
+                <input id="nameChange" type="text" placeholder="Change name">
+                <button onclick="">Save</button>
+                <br>
+                <!-- User shouldnt be able to send empty data, auto clean input -->
+                <button onclick="enableIndexSetter()">Z index</button>
+                <button onclick="enableAnimSetter()">Animations</button>
+                <div id="zIndexDiv" style="background-color:wheat; padding: 5px; border: black 1px solid;display: none;">
+                    <h3>select Z index:</h3>
+                    <p>*You can pick a range (From: | to:) of tiles or just one</p>
+                    <p>*Leaving this fields empty will use the currently selected tile</p>
+                    <form style="background-color: blanchedalmond;border:black 1px solid;" action="">
+                        <h4>select a range:</h4>
+                        <input id="zindexRangeInput" type="text" placeholder="Z Index">
+                        <br>
+                        <br>
+                        <input id="startInput" type="text" placeholder="From"><button onclick=";setStartIndexSelect()">Set</button>
+                        <input id="endInput" type="text" placeholder="To"><button onclick="setEndIndexSelect()">Set</button>
+                        <br>
+                        <button onclick="modifyTileTypeRange()">Save new zIndex</button>
+                    </form>
+                    <div style="background-color:burlywood;border:black 1px solid;">                    
+                        <h4>select just one tile:</h4>
+                        <input id="zindexInput" type="text" placeholder="Tile">
+                        <br>
+                        <br>
+                        <button onclick="modifyTileType()">Save new zIndex</button>
+                        <br>
+                    </div>
+                </div>
+                <div id="animationDiv" style="background-color:wheat; padding: 5px; border: black 1px solid;display: none;">
+                    <h3>select Animations:</h3>
+                    <form style="background-color: blanchedalmond;border:black 1px solid;" action="">
+                        <h4>select a range:</h4>
+                        <input id="zindexRangeInput" type="text" placeholder="Z Index">
+                        <br>
+                        <br>
+                        <input id="startInput" type="text" placeholder="From"><button onclick=";setStartIndexSelect()">Set</button>
+                        <input id="endInput" type="text" placeholder="To"><button onclick="setEndIndexSelect()">Set</button>
+                        <br>
+                        <button onclick="modifyTileTypeRange()">Save new zIndex</button>
+                    </form>
+                    <div style="background-color:burlywood;border:black 1px solid;">
+                        <h4>Modify an individual frame:</h4>
+                        <input id="zindexInput" type="text" placeholder="Tile">
+                        <br>
+                        <br>
+                        <button onclick="modifyTileType()">Save new zIndex</button>
+                        <br>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-left: 10px;margin-top: 15px;background-color: coral;">
+                <h3>Generate a map file: </h3>
+                <input id="filename" type="text" placeholder="Map Name">
                 <button style="margin-top: 5px;" onclick="mainDownload()">Generate map file</button>
                 <a id="download" href="" onclick="cleanDownload()" target="_blank" style="display: none;"> Download Map</a>
             </div>

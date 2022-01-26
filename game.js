@@ -16,7 +16,11 @@ scale = 2;
 //size of map on tiles
 let mapW = 10, mapH = 10; //map height should not exceed screen height
 
+let activeTileNumber = false;
+
 let currentSecond = 0, frameCount = 0, framesLastSecond = 0, lastFrameTime = 0;
+
+tileRangeSetStart = 0; tileRangeSetEnd = 0 ;
 
 elementHover = null;
 // TODO : user should be able to add a background, so instead of white in case of no tiles you can see some sort of skybox
@@ -38,7 +42,7 @@ floorType = {
 }
 
 tileTypes = new Object();
-tileTypesTest = new Object();
+//tileTypesTest = new Object();
 
 
 window.onload = function(){
@@ -139,12 +143,12 @@ function drawGame(){
                         tileW, tileH);
                     
                 }
-                if(z === 1 && zContents.size > 0){
-                    if(zContents.has( toIndex(x,y, mapW) )){
-                        var tile = tileTypes[zContents.get(toIndex(x,y, mapW))];
+                if(z === 1 && zContents.size > 0){                    
+                    if(zContents.has( toIndex(x,y, mapW) )){         
+                        var tile = tileTypes[zContents.get(toIndex(x,y, mapW))];                                                
                         //console.log("has", tileTypes[ zContents.get(toIndex(x,y, mapW)) ].name);
-                        let sprite = tile.sprite; 
-                        //getFrame(tile.sprite, tile.spriteDuration, currentFrameTime, tile.animated);
+                        //let sprite = tile.sprite; 
+                        let sprite = getFrame(tile.sprite, tile.spriteDuration, currentFrameTime, tile.animated);
                         ctx.drawImage(tileset,
                             sprite.x, sprite.y, sprite.w, sprite.h,
                             (x*tileW),  (y*tileH),

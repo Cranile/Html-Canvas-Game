@@ -47,6 +47,7 @@ function mouseLeaveCanvas(id){
 }
 
 function addLayeredObj(tileNum,content){
+    console.log("added z tile",content);
     zContents.set(tileNum,content);
 }
 function removeLayeredObj(tileNum){
@@ -69,7 +70,7 @@ function toIndex(x, y, mapW)
 	return((y * mapW) + x);
 }
 
-function downloadMap(mapData){
+function downloadMap(mapData,filename){
     let map = JSON.stringify(mapData);
     const blob = new Blob([map], {type:"octet-stream"});
     let href = URL.createObjectURL(blob);
@@ -77,10 +78,8 @@ function downloadMap(mapData){
     let a = Object.assign(document.getElementById("download"), {
         href, 
         style:"display:block",
-        download:"map.json"
+        download:filename+".json"
     });
-    
-
     
 }
 function cleanDownload(){
@@ -110,7 +109,9 @@ function changeTileSpan (tile){
 onmousedown = function(e){
     getClickContext(e);
 }
-
+onsubmit = function(e){
+    e.preventDefault();
+}
 function addTileToMap(x,y, mapW){
     gameMapData[ toIndex(x,y, mapW) ] = currentPickedTile;
 }
@@ -129,6 +130,7 @@ function removeTile(x,y,mapW){
     gameMapData[ toIndex(x,y, mapW) ] = 0;
 }
 
+
 function getClickContext(e){
     
     if(elementHover === "game"){
@@ -136,7 +138,7 @@ function getClickContext(e){
         let posx = (e.pageX - canvasOffset.left)/scale;
         let posy = (e.pageY - canvasOffset.top)/scale;
         let tiles = pixelToMap(posx,posy, tileW,tileH);
-
+        console.log(tiles);
         if(getMouseBtn(e) === "right"){
             //TODO: make a context menu appear if there is multiple layers
             getLayersAmmount(tiles[0],tiles[1], mapW)
@@ -190,9 +192,81 @@ function getLayersAmmount(x,y, mapW){
 }
 
 function mainDownload(){
-    downloadMap(gameMapData)
+    let name = document.getElementById("filename").value;
+    if(name === undefined || name === null || name === ""){
+        name = "map";
+    }
+    console.log("name: ",name);
+    downloadMap(gameMapData,name)
+}
+function downloadTypes(){
+    let name = "tileType";
+    
+    downloadMap(tileTypes,name)
 }
 
+function modifyTileType(tile,value){
+    let tempTile = tile;
+    let tempVal = document.getElementById("zindexInput").value;
+    if(tempTile === undefined || tempTile === null || tempTile === ""){
+        if(tempTile != 0){
+            tempTile = currentPickedTile;
+        }else{
+            console.log("cant modify that tile");
+        }
+    }
+
+    if(tileTypes[tempTile] === undefined){
+        console.log("invalid tile");
+    }else{
+        tileTypes[tempTile].zIndex = tempVal * 1;
+    }
+    
+}
+function setStartIndexSelect(){
+    let start;
+    let input = document.getElementById("startInput");
+    start = currentPickedTile;
+    input.value = start;
+}
+function setEndIndexSelect(){
+    let end;
+    let input = document.getElementById("endInput");
+    end = currentPickedTile;
+    input.value = end;    
+}
+
+function modifyTileTypeRange(tile){
+    let tempValStart = document.getElementById("startInput").value;
+    let tempValEnd = document.getElementById("endInput").value;
+    let index = document.getElementById("zindexRangeInput").value;
+    if(tempValStart === undefined || tempValStart === null || tempValEnd === 0 || tempValEnd === undefined || tempValEnd === null){
+        console.log("invalid data",tempValStart,tempValEnd);
+        return;
+    }
+    if(index === ""){
+        console.log("Index is empty");
+        return
+    }
+    console.log(tempValStart,tempValEnd);
+    for(let i = tempValStart; i <= tempValEnd; i++){
+        if(tileTypes[i] === undefined){
+            console.log("invalid tile");
+        }else{
+            tileTypes[i].zIndex = index;
+            console.log(tileTypes[i].zIndex);
+        }
+    }
+    
+}
+function enableIndexSetter(){
+    let sec = document.getElementById("zIndexDiv");
+    if(sec.style.display === "none"){
+        sec.style.display = "block"
+    }else{
+        sec.style.display = "none"
+    }
+}
 function createTileSetFromImg(){
     console.log(tileset.width , " , ", tileset.height);
     console.log(tileset.width / tileW);
