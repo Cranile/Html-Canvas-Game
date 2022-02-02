@@ -5,47 +5,35 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="style.css">
     <title>Game</title>
 </head>
 <body>
-    <div style="display: flex;align-content:flex-start;">
-        <canvas id="game" onmouseenter="mouseEnterCanvas('game')" onmouseleave="mouseLeaveCanvas('game')" width="100" height="100" style="border: 1px solid black;"></canvas>
-        <div style="align-self:flex-start;">
-            <canvas id="blockPick" onmouseenter="mouseEnterCanvas('blockPick')" onmouseleave="mouseLeaveCanvas('blockPick')" width="320" height="512" style="border: 1px solid black;align-self: flex-start;"></canvas>
-            
-        </div>
+    <canvas id="game" onmouseenter="mouseEnterCanvas('game')" onmouseleave="mouseLeaveCanvas('game')" width="100" height="100" style="display: inline;float:left;border: 1px solid black;"></canvas>
+    <div style="display: inline;float:left;">
         <div>
             <div style="margin-left: 10px;">
                 <p>current tile :</p>
                 <span id="tile"></span>
                 <br>
                 <input id="nameChange" type="text" placeholder="Change name">
-                <button onclick="">Save</button>
+                <button onclick="" disabled>Save</button>
                 <br>
                 <!-- User shouldnt be able to send empty data, auto clean input -->
-                <button onclick="enableIndexSetter()">Z index</button>
-                <button onclick="enableAnimSetter()">Animations</button>
+                <button onclick="enableHtmlSection('zIndexDiv')">Z index</button>
+                <button onclick="enableHtmlSection('animationDiv')">Animations</button>
+                <button onclick="enableHtmlSection('eventsDiv')">Events</button>
                 <div id="zIndexDiv" style="background-color:wheat; padding: 5px; border: black 1px solid;display: none;">
                     <h3>select Z index:</h3>
-                    <p>*You can pick a range (From: | to:) of tiles or just one</p>
-                    <p>*Leaving this fields empty will use the currently selected tile</p>
-                    <form style="background-color: blanchedalmond;border:black 1px solid;" action="">
-                        <h4>select a range:</h4>
-                        <input id="zindexRangeInput" type="text" placeholder="Z Index">
+                    <div style="background-color:burlywood;border:black 1px solid;">
+                        <h3>Favorite layers: </h3>
+                        <button>Layer 0</button>
                         <br>
                         <br>
-                        <input id="startInput" type="text" placeholder="From"><button onclick=";setStartIndexSelect()">Set</button>
-                        <input id="endInput" type="text" placeholder="To"><button onclick="setEndIndexSelect()">Set</button>
-                        <br>
-                        <button onclick="modifyTileTypeRange()">Save new zIndex</button>
-                    </form>
-                    <div style="background-color:burlywood;border:black 1px solid;">                    
-                        <h4>select just one tile:</h4>
-                        <input id="zindexInput" type="text" placeholder="Tile">
-                        <br>
-                        <br>
-                        <button onclick="modifyTileType()">Save new zIndex</button>
-                        <br>
+                        <label for="layerSelect">Current layer:</label>
+                        <select name="layerSelect" oninput="drawingOnLayer = (this.value * 1)" id="layerSelect">
+                        </select>
+                        <button>Add to favorite</button>
                     </div>
                 </div>
                 <div id="animationDiv" style="background-color:wheat; padding: 5px; border: black 1px solid;display: none;">
@@ -55,7 +43,8 @@
                         <input id="zindexRangeInput" type="text" placeholder="Z Index">
                         <br>
                         <br>
-                        <input id="startInput" type="text" placeholder="From"><button onclick=";setStartIndexSelect()">Set</button>
+                        <input id="startInput" type="text" placeholder="From"><button
+                            onclick=";setStartIndexSelect()">Set</button>
                         <input id="endInput" type="text" placeholder="To"><button onclick="setEndIndexSelect()">Set</button>
                         <br>
                         <button onclick="modifyTileTypeRange()">Save new zIndex</button>
@@ -69,14 +58,56 @@
                         <br>
                     </div>
                 </div>
+                <div id="eventsDiv" style="background-color:wheat; padding: 5px; border: black 1px solid;display: none;">
+                    <h3>select events:</h3>
+                    <div style="background-color:burlywood;border:black 1px solid;">
+                        <br>
+                        <label for="currentEvents">Current Events:</label>
+                        <select name="currentEvents" id="currentEvents">
+                        </select>
+                        <button onclick="readExistingEvent()"> Read </button>
+                        <button onclick=""> Modify </button>
+                        <form id="readEvent" >
+                            <input name="eventName" type="text" placeholder="Event Name" readonly>
+                            <input name="eventTile" type="number" placeholder="Event Position" readonly>
+                            <br>
+                            <input name="eventType" type="text" placeholder="Event Type" readonly>
+                            <br>
+                            <input name="eventArgs" type="text" placeholder="Event Parameters" size="50">
+                            
+                            </form>
+                        <h4>Create Event:</h4>
+                        <form id="newEvent">
+                            <h5>*Event type must match an already created object on 'EventList'</h5>
+                            <h5>*Dont save events with empty fields</h5>
+                            <input id="eventName" name="eventName" type="text" placeholder="Event Name" required>
+                            <input id="eventTile" name="eventTile" type="number" placeholder="Event Position" required>
+                            <br>
+                            <select id="eventType" name="eventType" type="text" placeholder="Event Type" required></select>
+                            <br>
+                            <input id="eventArgs" name="eventArgs" type="text" placeholder="Event Parameters" size="50" required>
+                            <br>
+                            <button type="submit" value="submit">Save</button>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div style="margin-left: 10px;margin-top: 15px;background-color: coral;">
-                <h3>Generate a map file: </h3>
-                <input id="filename" type="text" placeholder="Map Name">
-                <button style="margin-top: 5px;" onclick="mainDownload()">Generate map file</button>
-                <a id="download" href="" onclick="cleanDownload()" target="_blank" style="display: none;"> Download Map</a>
-            </div>
+    
         </div>
+    </div>
+    <!-- EXPORTS / DOWNLOADS-->
+    <div style="display: inline;float:left">
+        <canvas id="blockPick" onmouseenter="mouseEnterCanvas('blockPick')" onmouseleave="mouseLeaveCanvas('blockPick')" width="320" height="512" style="border: 1px solid black;align-self: flex-start;"></canvas>
+        <div style="margin-left: 10px;margin-top: 15px;background-color: coral;">
+            <h3>Export Just a map or an Entire Project: </h3>
+            <p>*Map does not come with zIndex</p>
+            <input id="filename" type="text" placeholder="Map Name">
+            <button style="margin-top: 5px;" onclick="mainDownload('download')">Generate map file</button>
+            <a id="download" href="" onclick="cleanDownload('download')" target="_blank" style="display: none;"> Download Map</a>
+            <button style="margin-top: 5px;" onclick="exportProject('ExportProject')">Generate Project file</button>
+            <a id="ExportProject" href="" onclick="cleanDownload('ExportProject')" target="_blank" style="display: none;"> Download Project</a>
+        </div>
+
     </div>
 
 </body>

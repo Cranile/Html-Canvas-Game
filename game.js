@@ -1,39 +1,45 @@
-//context.drawImage(img,sx,sy,swidth,sheight,x,y,width,height);
-
-//ProjectUtumno_full.png is w: 64 sprites and h: 95 | last row ends on px:735
-//from x: 0 && y: 64  TO  x:1791 && y:319 THERE IS BLOCKS  !!
-//from x: 1952 && y: 1856  TO  x:191 && y:2632 THERE IS Characters  !!
-//from x: 576 && y: 2528  TO  x:191 && y:2632 THERE IS min humanoid chars  !!
-
-tileSetURL = "./ProjectUtumno_full.png";
+var tileSetURL;
 var tileset = null;
 tileset = new Image();
-tileset.src = tileSetURL;
 //size of tiles on PX
-let tileW = 32, tileH = 32;
+let tileW , tileH ;
 //scale of the map
-scale = 2;
+var scale;
 //size of map on tiles
-let mapW = 10, mapH = 10; //map height should not exceed screen height
+let mapW , mapH ; //map height should not exceed screen height
 
 let activeTileNumber = false;
 
 let currentSecond = 0, frameCount = 0, framesLastSecond = 0, lastFrameTime = 0;
 
-tileRangeSetStart = 0; tileRangeSetEnd = 0 ;
+let shiftPressed = false;
 
 elementHover = null;
 // TODO : user should be able to add a background, so instead of white in case of no tiles you can see some sort of skybox
-// TODO : user should be able to import a json with map, scale, width, layer ammount & contents, and tileTypes
 // TODO : user should be able to generate an automatic tileTypes with all the tiles on the uploaded tileSheet, then modify manually the data 
-// TODO : update dowwnload function to export : Map widht & height, tileSheet, scale, tiles size, floorTypes, zlevels, zcontents
 currentPickedTile = 0;
 let gameMap = [];
 let gameMapData = [];
-// TODO : fix z content, add extra filter to be able to store more than 1 object on the same map position KEY
-let zLevels = 4;
+
+let drawingOnLayer = 0;
+let tempLevels;
+let zLevels ;
 let zContents = new Map();
+
+//map key = tile on map | object key = type of event, object value = function params
+let events = new Map();
+let eventTypes = ["goToPage","changeMap","openWindow"]
+let EventList = { 
+    "goToPage":[ 
+        {"args":["https://cranile.neocities.org/",true],"name":"Check out my Neo City" }, 
+        {"args":["https://cranile.wordpress.com/",true],"name":"Read my blog"}, 
+        {"args":["https://github.com/NicolasCrapanzano?tab=repositories",true],"name":"See my git repos"}, 
+        {"args":["https://cranile.itch.io/",true],"name":"Check my itchio"}, 
+    ],
+};
 // TODO : create "items" and "effects" content spaces, with their own zindex and particular map
+
+
 floorType = {
     solid : 0,
     path : 1,
@@ -44,16 +50,131 @@ floorType = {
 tileTypes = new Object();
 //tileTypesTest = new Object();
 
+//
+//
+//
+// TODO ::
+// 
+//
+//
+//
+
 
 window.onload = function(){
     gameCanvas = document.getElementById("game");
     ctx = gameCanvas.getContext("2d");
+    
+    
+    //fetchPartialProyect(true,false);
+    
+    fetchProject("./project.json","./tileTypes.json")
+    
+}
+function fetchPartialProyect(hasTiles,hasZ){
+    fetch("./proyectParams.json")
+    .then(res => {
+        return res.json();
+    })
+    .then(jsonData => {
+        tileSetURL = jsonData.tileSetUrl;
+        tileW = jsonData.tileW; 
+        tileH = jsonData.tileH;
+        scale = jsonData.scale;
+        mapW = jsonData.mapW;
+        mapH = jsonData.mapH;
+        zLevels = jsonData.zLevels;
+        gameMap = jsonData.gameMap;
+    }).catch(function(error){
+        window.alert("Error proyect parameters couldnt be loaded",error);
+    });
+    
+    if(hasZ){
+        fetch("./maps/zContents.json")
+        .then(res => {
+            return res.json();
+        })
+        .then(jsonData => {
+            tempLevels = jsonData;        
+        } ).catch(function(error){
+            window.alert("Error TileTypes couldnt be loaded",error);
+        });
+    }
+
+    if(hasTiles){
+        fetch("./tileTypes.json")
+        .then(res => {
+            return res.json();
+        })
+        .then(jsonData => {
+            tileTypes = jsonData;
+            
+            buildProyect(); 
+        } ).catch(function(error){
+            window.alert("Error TileTypes couldnt be loaded",error);
+        });
+    }
+    for(let i = 0 ; i < EventList["goToPage"].length ; i++){
+        let obj = {};
+        obj = { [Object.keys(EventList)] : EventList["goToPage"][i] };
+        addEvent(i, obj);
+    }
+}
+
+function fetchProject(filePath,tileTypesPath){
+    fetch(filePath)
+    .then(res => {
+        return res.json();
+    })
+    .then(jsonData => {
+        tileSetURL = jsonData.settings.tileSetUrl;
+        tileW = jsonData.settings.tileW; 
+        tileH = jsonData.settings.tileH;
+        scale = jsonData.settings.scale;
+        mapW = jsonData.settings.mapW;
+        mapH = jsonData.settings.mapH;
+        
+        zLevels = jsonData.settings.zLevels;
+        gameMap = jsonData.map;
+
+        tempLevels = jsonData.zContent;
+
+        
+    }).catch(function(error){
+        window.alert("Error proyect parameters couldnt be loaded",error);
+    });
+    
+    fetch(tileTypesPath)
+        .then(res => {
+            return res.json();
+        })
+        .then(jsonData => {
+            tileTypes = jsonData;
+            
+            buildProyect();
+        } ).catch(function(error){
+            window.alert("Error TileTypes couldnt be loaded",error);
+    });
+
+    for(let i = 0 ; i < EventList["goToPage"].length ; i++){
+        let obj = {};
+        obj = { [Object.keys(EventList)] : EventList["goToPage"][i] };
+        addEvent(i, obj);
+    }
+}
+function buildProyect(){
+    
+    tileset.src = tileSetURL;
+    
     canvasSizes = setCanvasSize(mapW,mapH,tileW,tileH,scale);
 
-    if(gameMap.length <= 0){
-        gameMap = generateGameMap(mapW,mapH);
-        gameMapData = gameMap.slice(0);
+    changeGameMap();
+    
+    setLayers();
+    if(tempLevels != undefined){
+        zContents = jsonToMap(tempLevels,1);
     }
+    
+
     canvasW = canvasSizes[0];
     canvasH = canvasSizes[1];
 
@@ -61,16 +182,12 @@ window.onload = function(){
     gameCanvas.height = canvasH;
 
     ctx.scale(scale,scale); //SET THE SCALE FOR THE PROJECT
-    fetch("./tileTypes.json")
-    .then(res => {
-        return res.json();
-    })
-    .then(jsonData => {tileTypes = jsonData;startGame()} )    
-}
 
+    setEventTypeOnHtml();
+    setCurrentEventsOnHtml();
+    startGame();
+}
 function startGame(){
-    
-    requestAnimationFrame(drawGame);
     for(x in tileTypes){
         tileTypes[x]['animated'] = tileTypes[x].sprite.length > 1 ? true : false;
         if(tileTypes[x].animated){
@@ -85,8 +202,10 @@ function startGame(){
         }
     };
     changeTileSpan(0);
-    setPickerParams();
-    ctx.font = "bold 10pt sans-serif";
+    requestAnimationFrame(drawGame);
+
+    //idk why this doesnt load if called instantly, and also  doesnt throw any errors
+    setTimeout(setPickerParams,500);
 }
 function getFrame(sprite, duration, time, animated){
     if(!animated){
@@ -129,12 +248,13 @@ function drawGame(){
         frameCount++;
     }
     ctx.imageSmoothingEnabled = false; //this being true(default) makes images blurry
-
-    for(let z = 0; z < 4;z++){
+    //console.log(zLevels);
+    for(let z = 0; z <= zLevels;z++){
         for(let y = 0; y < mapH;y++){
             
             for(let x = 0; x < mapW;x++){
                 if(z === 0){
+                    
                     var tile = tileTypes[gameMapData[toIndex(x,y, mapW)]];
                     let sprite = getFrame(tile.sprite, tile.spriteDuration, currentFrameTime, tile.animated);
                     ctx.drawImage(tileset,
@@ -143,9 +263,11 @@ function drawGame(){
                         tileW, tileH);
                     
                 }
-                if(z === 1 && zContents.size > 0){                    
-                    if(zContents.has( toIndex(x,y, mapW) )){         
-                        var tile = tileTypes[zContents.get(toIndex(x,y, mapW))];                                                
+                
+                if(zContents.size > 0 && zContents.get(z) ){
+                    //console.log(tileTypes[zContents.get(z).tileNum] === toIndex(x,y,mapW));                    
+                    if(zContents.get(z).hasOwnProperty( toIndex(x,y,mapW) ) ){
+                        var tile = tileTypes[zContents.get(z)[toIndex(x,y,mapW)]];
                         //console.log("has", tileTypes[ zContents.get(toIndex(x,y, mapW)) ].name);
                         //let sprite = tile.sprite; 
                         let sprite = getFrame(tile.sprite, tile.spriteDuration, currentFrameTime, tile.animated);
@@ -155,6 +277,7 @@ function drawGame(){
                             tileW, tileH);
                     }
                 }
+                
                 ctx.font = "bold 5pt sans-serif";
                 ctx.fillStyle = "#ff0000";
                 ctx.fillText(toIndex(x,y, mapW),(x*tileW) +10 , (y*tileH)+14);
@@ -165,48 +288,3 @@ function drawGame(){
         ctx.fillText("FPS: " + framesLastSecond, 10, 20);
         requestAnimationFrame(drawGame);
 }
-
-
-/*
-    !!! Around 1799 there is multiple drawings colored white and end up being ivisible !!!!
-
-    // TODO : setting this manually is annoying and stupid, 
-    // add some function that let you set an index number and map it to its ID
-    // Probably an upgrade to the UI on the developer side will be needed
-    // add thumbnail of currently selected (animated if needed), name selector section, is an animation? , what are its frames, index and default color if sprite is missing
-    // 
-    Secciones suelos ( index 0):
-    130 - 458 
-    468 - 528 
-    537 - 631
-    854 - 856
-    867 - 1084
-    1099 - 1226 
-    1229 - 1356
-    1363 - 1366
-    1405 - 1408
-    1417 - 1424
-    1441 - 1483
-    1571 - 1574
-
-    secciones decoraciones ( index 1):
-    1 - 129
-    459 - 467
-    529 - 536
-    632 - 769
-    770 - 779 icons ? 2
-    780 - 853
-    857 - 866
-    1085 - 1098
-    1227 - 1228
-    1357 - 1362
-    1367 - 1404
-    1409 - 1416
-    1425 - 1440
-    1484 
-    1485 - 1492 Projectiles ? 2
-    1493 - 1546 Smoke effects ? 3
-    1547 - 1570 projectiles ?
-
-*/
-
