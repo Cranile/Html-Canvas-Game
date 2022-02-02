@@ -50,14 +50,49 @@ floorType = {
 tileTypes = new Object();
 //tileTypesTest = new Object();
 
-//
-//
-//
-// TODO ::
-// 
-//
-//
-//
+/* TODO :: 
+    1-
+        when there is to many contents for the picker section, it becomes really bothersome to navigate
+        add some buttons to "jump" thru it, get the size of the canvas, get size of tiles, calculate how many tiles fit
+        divide the total ammount for how many fit on each "scroll", thats the ammount of buttons
+        maybe if still to many buttons, a re- divide will be needed
+    2-
+        implement the tile name changer
+    3-
+        implement animations on the new tile system
+    4-
+        add favorite layers system ?
+    5-
+        add a main menu from where you set the data BEFORE, the program starts running
+    6-
+        add button or hotkey for "multiple line" tile drawing
+    7-
+        make a help / tutorial section, with instructions on how to use this tool
+    8-
+        make user only version, with no editor, without the tile numbers and ready to run on pages with just a json, tile and 1 script
+    9-
+        set toogle for tile numbers on editor
+    10-
+        add context menu for easily adding events on the selected tile
+    11-
+        add context menu to remove tiles on a particular layer
+    12-
+        add export option for each individual part of the project (map,settings,layers,events), user should be able to make the make the map "in parts"
+    13-
+        make json "fuser" to combine the different exports into the main one
+    14-
+        add example proyect
+    15-
+        add credits section, credit the tileset creator (see credits.md)
+    16-
+        maybe add posibility to work with multiple tilesets ?
+    17-
+        maybe make an "image editor", where you can draw with pixels ?? is there a cdn or iframe to implement ? secure? maybe redirect to some external easy to use page?
+    18-
+        maybe implement a way of "fusing" diferent sprites together on a tileset? maybe external cdn or iframe, check security, maybe redirect to external page
+    19-
+        map loading on the run, create an event that lets you change the currently displayed map, so you can travel trhu "zones"
+*/
 
 
 window.onload = function(){

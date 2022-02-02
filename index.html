@@ -66,14 +66,14 @@
                         <select name="currentEvents" id="currentEvents">
                         </select>
                         <button onclick="readExistingEvent()"> Read </button>
-                        <button onclick=""> Modify </button>
+                        <button onclick="modifyExistingEvent()"> Modify </button>
                         <form id="readEvent" >
                             <input name="eventName" type="text" placeholder="Event Name" readonly>
                             <input name="eventTile" type="number" placeholder="Event Position" readonly>
                             <br>
                             <input name="eventType" type="text" placeholder="Event Type" readonly>
                             <br>
-                            <input name="eventArgs" type="text" placeholder="Event Parameters" size="50">
+                            <input name="eventArgs" type="text" placeholder="Event Parameters" size="50" >
                             
                             </form>
                         <h4>Create Event:</h4>
@@ -87,6 +87,7 @@
                             <br>
                             <input id="eventArgs" name="eventArgs" type="text" placeholder="Event Parameters" size="50" required>
                             <br>
+                            <input id="isModify" type="text" style="display:none" value="false">
                             <button type="submit" value="submit">Save</button>
                         </form>
                     </div>
@@ -95,7 +96,7 @@
     
         </div>
     </div>
-    <!-- EXPORTS / DOWNLOADS-->
+    <!-- EXPORTS / DOWNLOADS  /// PICKER !-->
     <div style="display: inline;float:left">
         <canvas id="blockPick" onmouseenter="mouseEnterCanvas('blockPick')" onmouseleave="mouseLeaveCanvas('blockPick')" width="320" height="512" style="border: 1px solid black;align-self: flex-start;"></canvas>
         <div style="margin-left: 10px;margin-top: 15px;background-color: coral;">
@@ -107,7 +108,25 @@
             <button style="margin-top: 5px;" onclick="exportProject('ExportProject')">Generate Project file</button>
             <a id="ExportProject" href="" onclick="cleanDownload('ExportProject')" target="_blank" style="display: none;"> Download Project</a>
         </div>
-
+    </div>
+    <div >
+        <button>0</button>
+        <br>
+        <button>10</button>
+        <br>
+        <button>20</button>
+        <br>
+        <button>30</button>
+        <br>
+        <button>40</button>
+        <br>
+        <button>50</button>
+        <br>
+        <button>60</button>
+        <br>
+        <button>70</button>
+        <br>
+        <button>80</button>
     </div>
 
 </body>

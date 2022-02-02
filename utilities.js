@@ -1,3 +1,5 @@
+
+
 //#region Events
 onwheel = function(e){
     if (elementHover != "blockPick"){
@@ -50,13 +52,16 @@ onsubmit = function(e){
     
     if(e.target.id === "newEvent"){
         let params = e.target ;
-        createEvent(params.eventName.value, stringToInt(params.eventTile.value), params.eventType.value, params.eventArgs.value);
+        createEvent(params.eventName.value, stringToInt(params.eventTile.value), params.eventType.value, getMultipleParam( params.eventArgs.value ),stringToInt( params.isModify.value));        
         params.eventName.value = "";        
         params.eventTile.value = "";
         params.eventArgs.value = "";
+        params.isModify.value = false;
+
     }
     e.preventDefault();
 }
+
 //#endregion
 
 //#region MOUSE CONTROLS 
@@ -329,8 +334,23 @@ function readExistingEvent(event){
     readForm.children.eventType.value = tempEventName;
     readForm.children.eventTile.value = tempEventId;
 
+}
+function modifyExistingEvent(event){
+        //get the dropdown on which the data is stored
+    let dropDown = document.getElementById("currentEvents");
+    let readForm = document.getElementById("newEvent");
 
-    //enableHtmlSection("readEvent");
+    //get the id from the dropdown, used for getting objects on event map
+    let tempEventId = dropDown.value;    
+    let tempValue = events.get( stringToInt( tempEventId ));
+    let tempEventName = Object.keys(tempValue);
+
+    readForm.children.eventName.value = tempValue[tempEventName].name;
+    readForm.children.eventArgs.value = tempValue[tempEventName].args;
+    readForm.children.eventType.value = tempEventName;
+    readForm.children.eventTile.value = tempEventId;
+    //set this to the now old event tile if you are modifing an existing event instead of just creating a new one
+    readForm.children.isModify.value = tempEventId;
 }
 //#endregion
 
@@ -532,10 +552,22 @@ function getLayersAmmount(x,y, mapW){
 //#endregion
 
 //#region Events
-function createEvent(eventName,eventTile,eventType,event){
+function createEvent(eventName,eventTile,eventType,event,isModify){
     let tempEvent = {};
-    tempEvent = {[eventType]: {"args":[event,true],"name":[eventName]}};
+    let tempParams = [];    
+    if( typeof(isModify) === "number"){
+        events.delete(isModify)
+    }
+    for(let i = 0; i < event.length ; i++){
+        if(event[i] == "true" || event[i] == "false"){
+            tempParams[i] = ( event[i] == "true" );
+        }else{
+            tempParams[i] = event[i];
+        }
+    }
     
+    tempEvent = {[eventType]: {"args":tempParams,"name":eventName}};
+    console.log(tempEvent);
     addEvent(eventTile,tempEvent);
 }
 function addEvent(tileCoords,event){    
@@ -547,7 +579,24 @@ function addEvent(tileCoords,event){
 //#endregion
 
 
+function getMultipleParam(parameter){
+    let param = parameter;
+    let len = param.length;
+    let tempParams = [];
+    tempParams[0] = "";
+    let ammountOfParams = 0;
 
+    for (i = 0; i < len ; i++){
+        if(param[i] === ","){
+            ammountOfParams ++;
+            tempParams[ammountOfParams] = "";
+        }else{    
+            tempParams[ammountOfParams] += param[i]
+        }
+    }
+    
+    return tempParams;
+}
 
 function changeGameMap(){
     
@@ -562,10 +611,12 @@ function loadMapArea(){
 
 // MADE ALTERNATIVE VERSION, THAT CREATES A WINDOW ON HTML ASKING THE USER IF THEY WANT TO GO TO ANOTHER PAGE, (WITH FLAVOR TEXT)
 function goToPage(link,newTab){
-    
+    console.log(link,newTab);
     let a = document.createElement('a');
     a.href = link;
-    if (newTab){
+    if (!newTab){
+        a.setAttribute('target');
+    }else{
         a.setAttribute('target','_blank');
     }
     a.click();
