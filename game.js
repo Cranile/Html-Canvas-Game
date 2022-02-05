@@ -220,6 +220,7 @@ function buildProyect(){
 
     setEventTypeOnHtml();
     setCurrentEventsOnHtml();
+    buildOverlayButtons();
     startGame();
 }
 function startGame(){

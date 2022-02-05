@@ -46,7 +46,8 @@ oncontextmenu = function(e){
     e.preventDefault();
 }
 onmousedown = function(e){
-    getClickContext(e);    
+    //console.log(e);
+    getClickContext(e);
 }
 onsubmit = function(e){
     
@@ -70,12 +71,20 @@ function mouseEnterCanvas(id){
     elementHover = id;
 }
 
-function mouseLeaveCanvas(id){
+function mouseLeaveCanvas(id,event){
+    
+    if(event != undefined || event != null){        
+        if( event.relatedTarget != null && event.relatedTarget.className === "canvasOverlayBtn"){
+            return;
+        }
+    }
+    
     //console.log("leave: ",id);
     elementHover = null;
 }
 
 function getClickContext(e){
+    //console.log(elementHover);
     if(elementHover === "game"){
         canvasOffset = gameCanvas.getBoundingClientRect();
         let posx = (e.pageX - canvasOffset.left)/scale;
@@ -213,9 +222,12 @@ function downloadTypes(){
 //#endregion
 
 //#region CONVERT DATA 
-function indexToPx(index, mapW){
-    let x = index % mapW;
-    let y = Math.floor(index / mapW);
+function indexToPx(index, mapw){
+    if(mapw === undefined || mapw === null){
+        mapw = mapW
+    }
+    let x = index % mapw;
+    let y = Math.floor(index / mapw);
     return[x,y];
 }
 
@@ -351,6 +363,64 @@ function modifyExistingEvent(event){
     readForm.children.eventTile.value = tempEventId;
     //set this to the now old event tile if you are modifing an existing event instead of just creating a new one
     readForm.children.isModify.value = tempEventId;
+}
+/*
+    What is this? there is no easy way to make collisions or hovers on canvas, since its contents are not 
+    elements on themselves. you can make a manual collision detection, onmousemove check if mouse is inside
+    tile, but probalby is going to be quite demanding, and with a big ammount of events or clickable effects
+    is going to tank the browser, probably you can make a custom onmousemove, doing some infinite interval
+    so its less efficient but more performative, also you could try to divide de screen in 4 sections and
+    define on wich section of the screen each event should be, so instead of checking all of the posible
+    combinations you only see the ones on that cuadrant
+    But im too lazy to test all of that,
+    so im putting some <button> elements and making them invisible so i can have a pointer change effect
+    i know, really stupid and confusing, but the feeling of the page is everything in this scenario
+*/
+function buildOverlayButtons(){
+    let overlay = document.getElementById("canvasOverlay");
+    let tempButton, currValue, currentPos,style;
+    let eventKeys = events.keys();
+
+    if(overlay.hasChildNodes() === true){        
+        overlay.innerHTML = "";
+    }
+
+    for(let i = 0; i < events.size ; i++){
+        currValue = eventKeys.next().value;
+        currentPos = indexToPx(currValue,mapW);
+        style = "left:"+(currentPos[0]*tileW) * scale +"px";
+        style += ";top:"+(currentPos[1]*tileH) * scale+"px";
+
+        tempButton = document.createElement('button');        
+        tempButton.className = "canvasOverlayBtn";
+        tempButton.id = "overlayBtn"+currValue;
+        tempButton.style = style;
+
+        tempButton.setAttribute('onclick', 'getClickContext(event);');
+        
+
+
+        overlay.appendChild (tempButton);
+    }
+}
+function displayEventOverlay(color){
+    let elements = document.getElementsByClassName("canvasOverlayBtn");
+    let customColor = "#14dce647";
+    if(color != undefined){
+        customColor = color;
+    }
+    for(let i = 0 ; i < elements.length ; i++){
+        
+        elements[i].style.backgroundColor = customColor;
+    }
+    
+}
+function hideEventOverlay(){
+    let elements = document.getElementsByClassName("canvasOverlayBtn");
+        for(let i = 0 ; i < elements.length ; i++){
+        
+        elements[i].style.backgroundColor = "transparent";
+    }
 }
 //#endregion
 
@@ -569,6 +639,7 @@ function createEvent(eventName,eventTile,eventType,event,isModify){
     tempEvent = {[eventType]: {"args":tempParams,"name":eventName}};
     console.log(tempEvent);
     addEvent(eventTile,tempEvent);
+    buildOverlayButtons();
 }
 function addEvent(tileCoords,event){    
     events.set(tileCoords,event);
@@ -620,4 +691,9 @@ function goToPage(link,newTab){
         a.setAttribute('target','_blank');
     }
     a.click();
+}
+
+function isColliding(myElement,otherElement){
+    let originX = myElement.x;
+    let originY = myElement.y;
 }
