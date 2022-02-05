@@ -380,6 +380,7 @@ function buildOverlayButtons(){
     let overlay = document.getElementById("canvasOverlay");
     let tempButton, currValue, currentPos,style;
     let eventKeys = events.keys();
+    let eventParams ;
 
     if(overlay.hasChildNodes() === true){        
         overlay.innerHTML = "";
@@ -388,9 +389,14 @@ function buildOverlayButtons(){
     for(let i = 0; i < events.size ; i++){
         currValue = eventKeys.next().value;
         currentPos = indexToPx(currValue,mapW);
+        eventParams = events.get(currValue);
         style = "left:"+(currentPos[0]*tileW) * scale +"px";
         style += ";top:"+(currentPos[1]*tileH) * scale+"px";
-
+        
+        // check if the event has a custom pointer or none at all
+        //if( eventParams[ Object.keys( eventParams ) ].args.pointer != undefined ){
+        //    console.log("test");
+        //}
         tempButton = document.createElement('button');        
         tempButton.className = "canvasOverlayBtn";
         tempButton.id = "overlayBtn"+currValue;
@@ -622,10 +628,12 @@ function getLayersAmmount(x,y, mapW){
 //#endregion
 
 //#region Events
-function createEvent(eventName,eventTile,eventType,event,isModify){
+function createEvent(eventName,eventTile,eventType,event,isModify,pointer){
     let tempEvent = {};
     let tempParams = [];    
     if( typeof(isModify) === "number"){
+        //is modify is usually false, when changed turns into a number, that being, the tile where this event previously was
+        //then removes it so there is no duplicated events on different tiles
         events.delete(isModify)
     }
     for(let i = 0; i < event.length ; i++){
@@ -678,6 +686,9 @@ function changeGameMap(){
 }
 function loadMapArea(){
 
+}
+function toggleTileNum(){
+    showTileNum = !showTileNum;
 }
 
 // MADE ALTERNATIVE VERSION, THAT CREATES A WINDOW ON HTML ASKING THE USER IF THEY WANT TO GO TO ANOTHER PAGE, (WITH FLAVOR TEXT)

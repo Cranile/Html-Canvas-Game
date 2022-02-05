@@ -16,13 +16,15 @@
                 <p>current tile :</p>
                 <span id="tile"></span>
                 <br>
-                <input id="nameChange" type="text" placeholder="Change name">
+                <input id="nameChange" type="text" placeholder="Change name" disabled>
                 <button onclick="" disabled>Save</button>
                 <br>
                 <!-- User shouldnt be able to send empty data, auto clean input -->
                 <button onclick="enableHtmlSection('zIndexDiv')">Z index</button>
                 <button onclick="enableHtmlSection('animationDiv')">Animations</button>
                 <button onclick="enableHtmlSection('eventsDiv')">Events</button>
+                <br>
+                <button onclick="toggleTileNum()">Show/Hide tile positions</button>
                 <div id="zIndexDiv" style="background-color:wheat; padding: 5px; border: black 1px solid;display: none;">
                     <h3>select Z index:</h3>
                     <div style="background-color:burlywood;border:black 1px solid;">

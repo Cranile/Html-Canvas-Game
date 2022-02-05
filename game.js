@@ -14,6 +14,8 @@ let currentSecond = 0, frameCount = 0, framesLastSecond = 0, lastFrameTime = 0;
 
 let shiftPressed = false;
 
+let showTileNum = true;
+
 elementHover = null;
 // TODO : user should be able to add a background, so instead of white in case of no tiles you can see some sort of skybox
 // TODO : user should be able to generate an automatic tileTypes with all the tiles on the uploaded tileSheet, then modify manually the data 
@@ -313,10 +315,12 @@ function drawGame(){
                             tileW, tileH);
                     }
                 }
-                
-                ctx.font = "bold 5pt sans-serif";
-                ctx.fillStyle = "#ff0000";
-                ctx.fillText(toIndex(x,y, mapW),(x*tileW) +10 , (y*tileH)+14);
+                //check if the user wants to see the tile numbers
+                if(showTileNum){
+                    ctx.font = "bold 5pt sans-serif";
+                    ctx.fillStyle = "#ff0000";
+                    ctx.fillText(toIndex(x,y, mapW),(x*tileW) +10 , (y*tileH)+14);
+                }
             }
         }
     }
