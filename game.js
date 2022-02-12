@@ -147,6 +147,8 @@ function fetchPartialProyect(hasTiles,hasZ){
 }
 
 function fetchProject(filePath,tileTypesPath){
+    let typesDone, settingsDone;
+
     fetch(filePath)
     .then(res => {
         return res.json();
@@ -162,9 +164,14 @@ function fetchProject(filePath,tileTypesPath){
         zLevels = jsonData.settings.zLevels;
         gameMap = jsonData.map;
 
+        EventList = jsonData.events;
         tempLevels = jsonData.zContent;
 
-        
+        settingsDone = true;
+        generateEventsFromVar();
+        if(typesDone === true && settingsDone === true){
+            buildProyect();
+        }
     }).catch(function(error){
         window.alert("Error proyect parameters couldnt be loaded",error);
     });
@@ -175,12 +182,16 @@ function fetchProject(filePath,tileTypesPath){
         })
         .then(jsonData => {
             tileTypes = jsonData;
-            
-            buildProyect();
-        } ).catch(function(error){
-            window.alert("Error TileTypes couldnt be loaded",error);
-    });
+            typesDone = true;
 
+            if(typesDone === true && settingsDone === true){
+                buildProyect();
+            }   
+        }).catch(function(error){
+            window.alert("Error TileTypes couldnt be loaded",error);
+        });
+    
+    
 }
 function buildProyect(){
     gameCanvas = document.getElementById("game");

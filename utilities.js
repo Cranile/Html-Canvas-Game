@@ -697,6 +697,16 @@ function modifyTileTypeRange(tile){
     }
     
 }
+
+function createEmptyProject(mapw,maph,tilesh,tilesw){
+    mapW = mapw;
+    mapH = maph;
+    tilesH = tilesh;
+    tilesW = tilesw;
+
+    gameCanvas = document.getElementById("game");
+    ctx = gameCanvas.getContext("2d");
+}
 //#endregion
 
 //#region HAS DATA OR GET DATA
