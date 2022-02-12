@@ -9,142 +9,248 @@
     <title>Game</title>
 </head>
 <body>
-    <canvas id="game" onmouseenter="mouseEnterCanvas('game')" onmouseleave="mouseLeaveCanvas('game',event)" width="100" height="100" style="display: inline;float:left;border: 1px solid black;"></canvas>
-    <div style="display: inline;float:left;">
-        <div>
-            <div style="margin-left: 10px;">
-                <p>current tile :</p>
-                <span id="tile"></span>
-                <br>
-                <input id="nameChange" type="text" placeholder="Change name" disabled>
-                <button onclick="" disabled>Save</button>
-                <br>
-                <!-- User shouldnt be able to send empty data, auto clean input -->
-                <button onclick="enableHtmlSection('zIndexDiv')">Z index</button>
-                <button onclick="enableHtmlSection('animationDiv')">Animations</button>
-                <button onclick="enableHtmlSection('eventsDiv')">Events</button>
-                <br>
-                <button onclick="toggleTileNum()">Show/Hide tile positions</button>
-                <div id="zIndexDiv" style="background-color:wheat; padding: 5px; border: black 1px solid;display: none;">
-                    <h3>select Z index:</h3>
-                    <div style="background-color:burlywood;border:black 1px solid;">
-                        <h3>Favorite layers: </h3>
-                        <button>Layer 0</button>
-                        <br>
-                        <br>
-                        <label for="layerSelect">Current layer:</label>
-                        <select name="layerSelect" oninput="drawingOnLayer = (this.value * 1)" id="layerSelect">
-                        </select>
-                        <button>Add to favorite</button>
-                    </div>
-                </div>
-                <div id="animationDiv" style="background-color:wheat; padding: 5px; border: black 1px solid;display: none;">
-                    <h3>select Animations:</h3>
-                    <form style="background-color: blanchedalmond;border:black 1px solid;" action="">
-                        <h4>select a range:</h4>
-                        <input id="zindexRangeInput" type="text" placeholder="Z Index">
-                        <br>
-                        <br>
-                        <input id="startInput" type="text" placeholder="From"><button
-                            onclick=";setStartIndexSelect()">Set</button>
-                        <input id="endInput" type="text" placeholder="To"><button onclick="setEndIndexSelect()">Set</button>
-                        <br>
-                        <button onclick="modifyTileTypeRange()">Save new zIndex</button>
+    <div id="configContainer" style="display: flex;justify-content: center;align-items: center;">
+        <div id="" style="background-color:wheat; padding: 5px; border: black 1px solid;text-align: center;">
+            <h3>Welcome To The Developer Mode:</h3>
+            <h4>Set up your project settings</h4>
+            <div class="padding5" style="background-color:burlywood;border:black 1px solid;display: grid;grid-template-columns: auto auto auto;grid-column-gap: 1vw;">
+
+                <div style="flex: 50%; border:black 1px solid;background-color: darksalmon;">
+                    <form action="" id="fullProjectForm">
+                        <div class="padding5" id="" style="border:black 2px dotted;">
+                            <label for="fullProject">Add the .json file with the full project data</label>
+                            <br>
+                            <input type="file" name="fullProject" id="fullProject" class="margin5" required>
+                        </div>
+                        <div class="padding5" id="" style="border:black 2px dotted;">
+                            <label for="tileTypes">Add the .json file with tileTypes</label>
+                            <br>
+                            <input type="file" name="tileTypes" id="tileTypes" class="margin5" required>
+                        </div>
+                        <div class="padding5" id="" style="border:black 2px dotted;">
+                            <label for="tileFullProject">Add the tileset image</label>
+                            <br>
+                            <input type="file" accept="image/*" name="tileFullProject" id="tileFullProject" class="margin5" required>
+                        </div>
+                        <button class="margin5" onsubmit="" >Load from Project File</button>
                     </form>
-                    <div style="background-color:burlywood;border:black 1px solid;">
-                        <h4>Modify an individual frame:</h4>
-                        <input id="zindexInput" type="text" placeholder="Tile">
-                        <br>
-                        <br>
-                        <button onclick="modifyTileType()">Save new zIndex</button>
-                        <br>
-                    </div>
+                    <button class="margin5" onclick="helpSectionSwap('FullProjHelp')">?</button>
                 </div>
-                <div id="eventsDiv" style="background-color:wheat; padding: 5px; border: black 1px solid;display: none;">
-                    <h5>*To activate an event press SHIFT + Left Click on the tile that has that event</h5>
-                    <h3>select events:</h3>
-                    <div style="background-color:burlywood;border:black 1px solid;">
-                        <br>
-                        <label for="currentEvents">Current Events:</label>
-                        <select name="currentEvents" id="currentEvents">
-                        </select>
-                        <button onclick="readExistingEvent()"> Read </button>
-                        <button onclick="modifyExistingEvent()"> Modify </button>
-                        <form id="readEvent" >
-                            <input name="eventName" type="text" placeholder="Event Name" readonly>
-                            <input name="eventTile" type="number" placeholder="Event Position" readonly>
-                            <br>
-                            <input name="eventType" type="text" placeholder="Event Type" readonly>
-                            <br>
-                            <input name="eventArgs" type="text" placeholder="Event Parameters" size="50" >
-                            
-                            </form>
-                        <h4>Create Event:</h4>
-                        <form id="newEvent">
-                            <h5>*Event type must match an already created object on 'EventList'</h5>
-                            <h5>*Dont save events with empty fields</h5>
-                            <input id="eventName" name="eventName" type="text" placeholder="Event Name" required>
-                            <input id="eventTile" name="eventTile" type="number" placeholder="Event Position" required>
-                            <br>
-                            <select id="eventType" name="eventType" type="text" placeholder="Event Type" required></select>
-                            <br>
-                            <input id="eventArgs" name="eventArgs" type="text" placeholder="Event Parameters" size="50" required>
-                            <br>
-                            <input id="isModify" type="text" style="display:none" value="false">
-                            <button type="submit" value="submit">Save</button>
-                        </form>
-                        <br>
-                        <button onclick="buildOverlayButtons()">Reload events display</button>
-                        <br>
-                        <button onclick="displayEventOverlay()">Show events Overlay</button>
-                        <button onclick="hideEventOverlay()">Hide events Overlay</button>
+                
+                <div style="flex: 50%;border:black 1px solid;background-color: darksalmon;">
+                    <button class="margin5">Start from the ground up.</button>
+                    <br>
+                    <button class="margin5">Start with example project.</button>
+                    <br>
+                    <button class="margin5" onclick="helpSectionSwap('groundUpHelp')">?</button>
+                </div>
+                
+                <div style="flex: 100%;border:black 1px solid;background-color: darksalmon;">
+                    <div class="padding5" id="partialProject" >
+                        <div>
+                                <input type="file" name="" id="" class="margin5" required>
+                                <br>
+                                <label for="">Add the .json file with map data</label>
+                            </div>
+                            <div>
+                                <input type="file" name="" id="" class="margin5" required>
+                                <br>
+                                <label for="">Add the .json file with Z layers data</label>
+                            </div>
+                            <div>
+                                <input type="file" name="" id="" class="margin5" required>
+                                <br>
+                                <label for="">Add the .json file with events data</label>
+                            </div>
+                            <div>
+                                <input type="file" name="" id="" class="margin5" required>
+                                <br>
+                                <label for="">Add the .json file with settings data</label>
+                            </div>
                     </div>
+                    <button class="margin5">Start with partial project Files</button>
+                    <button class="margin5" onclick="helpSectionSwap('PartialProjHelp')">?</button>
                 </div>
             </div>
-    
+            <br>
+            <div id="help" style="background-color: cadetblue;border:black 3px solid;padding: 5px;">
+                <div id="FullProjHelp" class="none">
+                    <p>A full project file consist of : settings , a map, Z layers and events.</p>
+                    <p>This is the type of file you need to host your own project, if some of the pieces is missing the user-faced page will not work</p>
+                </div>
+                <div id="PartialProjHelp" class="none">
+                    <p>A partial project can consist of a max of 4 parts: settings, map, Z layers and events</p>
+                    <h5>¿Why partial project?</h5>
+                    <p>You may want to create more than one map or a different series of events / Layer contents, to dynamicaly swap on your project</p>
+                    <p>You can import extra data this way or you may be still on the proccess of creating your page, and dont have all of the contents figured out</p>
+                    <p>Its really important that you fuse all of your partial project files on at least one full file, otherwise the page will not work</p>
+                </div>
+                <div id="groundUpHelp" class="none">
+                    <p>Unless you have a previously worked on file, that you or someone else created</p>
+                    <p>You will want to create a new project, clicking on <button disabled>Start from the ground up</button> you can define how some basic aspects of your page are going to look</p>
+                    <i>For more help you can read the guide below or watch this <a href="">video(WIP) </a></i>
+                    <h5>Begginers stuff</h5>
+                    <p>To begin you will need some sort of <a href="https://en.wikipedia.org/wiki/Tile-based_video_game" target="__blank"> tileset </a> </p>
+                    <p>if you dont have one, you can make one, permanent or provisional (the tile set and config can be changed at any moment)</p>
+                    <p>Or you can download one from <a href="https://opengameart.org/art-search-advanced?field_art_tags_tid=tileset" target="__blank"> OpenGameArt </a> (Remember to always credit the artists!)</p>
+                    <p>Whatever Tileset you choose, its really important that you know the size of the individual tiles</p>
+                    <p>Incase you dont know the size you can use some photo editing tool like GIMP or photoshop, activate grid display and measurment tools</p>
+                    <p>Lastly set a size to your map (It will be measured in tiles), if you are still lost, dont worry</p>
+                    <p>You can check the <a href="" target="__blank">Documentation (WIP)</a> (There will be another link on the editor)</p>
+                    <p>Or press <button disabled>Start with example Project</button> to what a finished page looks like</p>
+                </div>
+                <div id="begginersMsg" class="block">
+                    <h4>For more in-depth help click the little <button disabled>?</button> buttons on each section</h4>
+                    <h5>If this is your first time here, you will want to make a brand new project, so click on "start from the ground up"</h5>
+                </div>
+                <i>And most importantly, remember to have fun while making your page, and be creative. Thats what make your space on the web special</i>
+            </div>
         </div>
     </div>
-    <!-- EXPORTS / DOWNLOADS  /// PICKER !-->
-    <div id="secondaryBlock" style="display: inline;float:left">
-        <canvas id="blockPick" onmouseenter="mouseEnterCanvas('blockPick')" onmouseleave="mouseLeaveCanvas('blockPick')" width="320" height="512" style="border: 1px solid black;align-self: flex-start;"></canvas>
-        <br>
-        <input type="text"placeholder="Search by Name" disabled>
-        <input type="text" placeholder="Search by Id" disabled>
-        <input type="text" placeholder="Search by Group" disabled>
-        <div style="margin-left: 10px;margin-top: 15px;background-color: coral;">
-            <h3>Export Just a map or an Entire Project: </h3>
-            <p>*Map does not come with zIndex</p>
-            <input id="filename" type="text" placeholder="Map Name">
-            <button style="margin-top: 5px;" onclick="mainDownload('download')">Generate map file</button>
-            <a id="download" href="" onclick="cleanDownload('download')" target="_blank" style="display: none;"> Download Map</a>
-            <button style="margin-top: 5px;" onclick="exportProject('ExportProject')">Generate Project file</button>
-            <a id="ExportProject" href="" onclick="cleanDownload('ExportProject')" target="_blank" style="display: none;"> Download Project</a>
-        </div>
-    </div>
-    <div >
-        <button>0</button>
-        <br>
-        <button>10</button>
-        <br>
-        <button>20</button>
-        <br>
-        <button>30</button>
-        <br>
-        <button>40</button>
-        <br>
-        <button>50</button>
-        <br>
-        <button>60</button>
-        <br>
-        <button>70</button>
-        <br>
-        <button>80</button>
-    </div>
-    <div id="canvasOverlay">
+    <div id="mainContainer" style="display: none;">
+        <canvas id="game" onmouseenter="mouseEnterCanvas('game')" onmouseleave="mouseLeaveCanvas('game',event)" width="100" height="100" style="display: inline;float:left;border: 1px solid black;"></canvas>
+        <div style="display: inline;float:left;">
+            <div>
+                <div style="margin-left: 10px;">
+                    <p>current tile :</p>
+                    <span id="tile"></span>
+                    <br>
+                    <input id="nameChange" type="text" placeholder="Change name" disabled>
+                    <button onclick="" disabled>Save</button>
+                    <br>
+                    <!-- User shouldnt be able to send empty data, auto clean input -->
+                    <button onclick="enableHtmlSection('zIndexDiv')">Z index</button>
+                    <button onclick="enableHtmlSection('animationDiv')">Animations</button>
+                    <button onclick="enableHtmlSection('eventsDiv')">Events</button>
+                    <br>
+                    <button onclick="toggleTileNum()">Show/Hide tile positions</button>
+                    <div id="zIndexDiv" style="background-color:wheat; padding: 5px; border: black 1px solid;display: none;">
+                        <h3>select Z index:</h3>
+                        <div style="background-color:burlywood;border:black 1px solid;">
+                            <h3>Favorite layers: </h3>
+                            <button>Layer 0</button>
+                            <br>
+                            <br>
+                            <label for="layerSelect">Current layer:</label>
+                            <select name="layerSelect" oninput="drawingOnLayer = (this.value * 1)" id="layerSelect">
+                            </select>
+                            <button>Add to favorite</button>
+                        </div>
+                    </div>
+                    <div id="animationDiv" style="background-color:wheat; padding: 5px; border: black 1px solid;display: none;">
+                        <h3>select Animations:</h3>
+                        <form style="background-color: blanchedalmond;border:black 1px solid;" action="">
+                            <h4>select a range:</h4>
+                            <input id="zindexRangeInput" type="text" placeholder="Z Index">
+                            <br>
+                            <br>
+                            <input id="startInput" type="text" placeholder="From"><button
+                                onclick=";setStartIndexSelect()">Set</button>
+                            <input id="endInput" type="text" placeholder="To"><button onclick="setEndIndexSelect()">Set</button>
+                            <br>
+                            <button onclick="modifyTileTypeRange()">Save new zIndex</button>
+                        </form>
+                        <div style="background-color:burlywood;border:black 1px solid;">
+                            <h4>Modify an individual frame:</h4>
+                            <input id="zindexInput" type="text" placeholder="Tile">
+                            <br>
+                            <br>
+                            <button onclick="modifyTileType()">Save new zIndex</button>
+                            <br>
+                        </div>
+                    </div>
+                    <div id="eventsDiv" style="background-color:wheat; padding: 5px; border: black 1px solid;display: none;">
+                        <h5>*To activate an event press SHIFT + Left Click on the tile that has that event</h5>
+                        <h3>select events:</h3>
+                        <div style="background-color:burlywood;border:black 1px solid;">
+                            <br>
+                            <label for="currentEvents">Current Events:</label>
+                            <select name="currentEvents" id="currentEvents">
+                            </select>
+                            <button onclick="readExistingEvent()"> Read </button>
+                            <button onclick="modifyExistingEvent()"> Modify </button>
+                            <form id="readEvent" >
+                                <input name="eventName" type="text" placeholder="Event Name" readonly>
+                                <input name="eventTile" type="number" placeholder="Event Position" readonly>
+                                <br>
+                                <input name="eventType" type="text" placeholder="Event Type" readonly>
+                                <br>
+                                <input name="eventArgs" type="text" placeholder="Event Parameters" size="50" >
+                                
+                                </form>
+                            <h4>Create Event:</h4>
+                            <form id="newEvent">
+                                <h5>*Event type must match an already created object on 'EventList'</h5>
+                                <h5>*Dont save events with empty fields</h5>
+                                <input id="eventName" name="eventName" type="text" placeholder="Event Name" required>
+                                <input id="eventTile" name="eventTile" type="number" placeholder="Event Position" required>
+                                <br>
+                                <select id="eventType" name="eventType" type="text" placeholder="Event Type" required></select>
+                                <br>
+                                <input id="eventArgs" name="eventArgs" type="text" placeholder="Event Parameters" size="50" required>
+                                <br>
+                                <input id="isModify" type="text" style="display:none" value="false">
+                                <button type="submit" value="submit">Save</button>
+                            </form>
+                            <br>
+                            <button onclick="buildOverlayButtons()">Reload events display</button>
+                            <br>
+                            <button onclick="displayEventOverlay()">Show events Overlay</button>
+                            <button onclick="hideEventOverlay()">Hide events Overlay</button>
+                        </div>
+                    </div>
+                </div>
         
+            </div>
+        </div>
+        <!-- EXPORTS / DOWNLOADS  /// PICKER !-->
+        <div id="secondaryBlock" style="display: inline;float:left">
+            <canvas id="blockPick" onmouseenter="mouseEnterCanvas('blockPick')" onmouseleave="mouseLeaveCanvas('blockPick')" width="320" height="512" style="border: 1px solid black;align-self: flex-start;"></canvas>
+            <br>
+            <input type="text"placeholder="Search by Name" disabled>
+            <input type="text" placeholder="Search by Id" disabled>
+            <input type="text" placeholder="Search by Group" disabled>
+            <div style="margin-left: 10px;margin-top: 15px;background-color: coral;">
+                <h3>Export Just a map or an Entire Project: </h3>
+                <p>*Map does not come with zIndex</p>
+                <input id="filename" type="text" placeholder="Map Name">
+                <button style="margin-top: 5px;" onclick="mainDownload('download')">Generate map file</button>
+                <a id="download" href="" onclick="cleanDownload('download')" target="_blank" style="display: none;"> Download Map</a>
 
+                <button style="margin-top: 5px;" onclick="exportProject('ExportProject')">Generate Project file</button>
+                <a id="ExportProject" href="" onclick="cleanDownload('ExportProject')" target="_blank" style="display: none;"> Download Project</a>
+
+                <button  href="" onclick="downloadTypes('downloadTypes')" target="_blank" > download Tile Types</button>
+                <a id="downloadTypes" href="" onclick="cleanDownload('downloadTypes')" target="_blank" style="display: none;"> Download TileType</a>
+                
+            </div>
+        </div>
+        <div >
+            <button>0</button>
+            <br>
+            <button>10</button>
+            <br>
+            <button>20</button>
+            <br>
+            <button>30</button>
+            <br>
+            <button>40</button>
+            <br>
+            <button>50</button>
+            <br>
+            <button>60</button>
+            <br>
+            <button>70</button>
+            <br>
+            <button>80</button>
+        </div>
+        <div id="canvasOverlay">
+            
+
+        </div>
     </div>
 </body>
+
 <script src="game.js"></script>
 <script src="picker.js"></script>
 <script src="utilities.js"></script>

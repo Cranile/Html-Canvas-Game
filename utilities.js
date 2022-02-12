@@ -59,9 +59,29 @@ onsubmit = function(e){
         params.eventArgs.value = "";
         params.isModify.value = false;
 
+    }else if(e.target.id === "fullProjectForm"){
+        let input = e.target.elements;
+        let files = [];
+        if(input.fullProject != undefined || input.tileFullProject != undefined || input.tileTypes != undefined){
+            files[0] = input.fullProject.files;
+            files[1] = input.tileFullProject.files;
+            files[2] = input.tileTypes.files;
+
+            console.log(files);
+            setupProjectFull(files)
+        }
     }
     e.preventDefault();
 }
+onload = function(e){
+    const fileSelector = document.getElementById("fullProject");
+    fileSelector.addEventListener("change", (e) => {
+        let file = e.target.files;
+        
+        //setupProjectFull(file);
+    });
+}
+
 
 //#endregion
 
@@ -213,10 +233,10 @@ function mainDownload(downloadOrigin){
     downloadMap(gameMapData,name,downloadOrigin)
 }
 
-function downloadTypes(){
-    let name = "tileType";
+function downloadTypes(downloadOrigin){
+    let name = "tileTypes";
     
-    downloadMap(tileTypes,name)
+    downloadMap(tileTypes,name,downloadOrigin)
 }
 
 //#endregion
@@ -428,6 +448,23 @@ function hideEventOverlay(){
         elements[i].style.backgroundColor = "transparent";
     }
 }
+function closeMenuStartGame(){
+    document.getElementById("configContainer").style.display = "none";
+    document.getElementById("mainContainer").style.display = "block";
+}
+function helpSectionSwap(newBlockId){
+    if(newBlockId === undefined ){
+        console.log("new block id is undefined");
+        return;
+    }
+    let oldVisible = document.getElementsByClassName("block")[0];
+    let newVisible = document.getElementById(newBlockId);
+    oldVisible.classList.remove("block");
+    oldVisible.classList.add("none");
+
+    newVisible.classList.remove("none");
+    newVisible.classList.add("block");
+}
 //#endregion
 
 //#region TILES MODIFIERS
@@ -492,6 +529,76 @@ function addTileOnRange(from,to,tile){
 //#endregion
 
 //#region SET PROJECT DATA
+function setupProjectFull(file){
+    console.log(file)
+    let projDone,imgDone,tileDone;
+    let fileRead = new FileReader();
+    let imageRead = new FileReader();
+    let tileTypeRead = new FileReader();
+    let gotData;
+    let tileTypeData;
+
+    imageRead.readAsDataURL(file[1][0]);
+    imageRead.onload = function (){
+        tileSetURL = imageRead.result;
+        imgDone = true;
+        if(projDone === true && imgDone === true && tileDone === true ){
+            
+            buildProyect();
+        }
+    };
+    imageRead.onerror = function() {
+        alert(imageRead.error);
+        return;
+    };
+
+    fileRead.readAsText(file[0][0]);
+    fileRead.onload = function() {
+        gotData = fileRead.result;
+        gotData = JSON.parse(gotData);
+        
+        tileW = gotData.settings.tileW; 
+        tileH = gotData.settings.tileH;
+        scale = gotData.settings.scale;
+        mapW = gotData.settings.mapW;
+        mapH = gotData.settings.mapH;
+        
+        zLevels = gotData.settings.zLevels;
+        gameMap = gotData.map;
+
+        EventList = gotData.events;
+
+        tempLevels = gotData.zContent;
+        projDone = true;
+        if(projDone === true && imgDone === true && tileDone === true ){
+            
+            buildProyect();
+        }
+    }
+    fileRead.onerror = function() {
+        alert(fileRead.error);
+        return;
+    };
+
+    tileTypeRead.readAsText(file[2][0]);
+    tileTypeRead.onload = function() {
+        tileTypeData = tileTypeRead.result;
+        tileTypeData = JSON.parse(tileTypeData);
+
+        tileTypes = tileTypeData;
+        tileDone = true;
+        if(projDone === true && imgDone === true && tileDone === true ){
+            
+            buildProyect();
+        }
+    }
+    tileTypeRead.onerror = function() {
+        alert(tileTypeRead.error);
+        return;
+    };
+    
+    
+}
 function setCanvasSize(mapW,mapH,TilesW,TilesH,scale){
     let canvasW = (mapW * TilesW) * scale;
     let canvasH = (mapH * TilesH) * scale;
@@ -654,7 +761,13 @@ function addEvent(tileCoords,event){
     setTimeout(setCurrentEventsOnHtml,100)
     
 }
-
+function generateEventsFromVar(){
+    for(let i = 0 ; i < EventList["goToPage"].length ; i++){
+        let obj = {};
+        obj = { [Object.keys(EventList)] : EventList["goToPage"][i] };
+        addEvent(EventList["goToPage"][i].pos, obj);
+    }
+}
 //#endregion
 
 

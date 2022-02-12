@@ -31,14 +31,7 @@ let zContents = new Map();
 //map key = tile on map | object key = type of event, object value = function params
 let events = new Map();
 let eventTypes = ["goToPage","changeMap","openWindow"]
-let EventList = { 
-    "goToPage":[ 
-        {"args":["https://cranile.neocities.org/",true],"name":"Check out my Neo City" }, 
-        {"args":["https://cranile.wordpress.com/",true],"name":"Read my blog"}, 
-        {"args":["https://github.com/NicolasCrapanzano?tab=repositories",true],"name":"See my git repos"}, 
-        {"args":["https://cranile.itch.io/",true],"name":"Check my itchio"}, 
-    ],
-};
+let EventList = {};
 // TODO : create "items" and "effects" content spaces, with their own zindex and particular map
 
 
@@ -72,8 +65,6 @@ tileTypes = new Object();
         make a help / tutorial section, with instructions on how to use this tool
     8-
         make user only version, with no editor, without the tile numbers and ready to run on pages with just a json, tile and 1 script
-    9-
-        set toogle for tile numbers on editor
     10-
         add context menu for easily adding events on the selected tile
     11-
@@ -97,16 +88,14 @@ tileTypes = new Object();
 */
 
 
-window.onload = function(){
+
+function setupProject(){
     gameCanvas = document.getElementById("game");
     ctx = gameCanvas.getContext("2d");
     
-    
-    //fetchPartialProyect(true,false);
-    
     fetchProject("./project.json","./tileTypes.json")
-    
 }
+
 function fetchPartialProyect(hasTiles,hasZ){
     fetch("./proyectParams.json")
     .then(res => {
@@ -192,14 +181,11 @@ function fetchProject(filePath,tileTypesPath){
             window.alert("Error TileTypes couldnt be loaded",error);
     });
 
-    for(let i = 0 ; i < EventList["goToPage"].length ; i++){
-        let obj = {};
-        obj = { [Object.keys(EventList)] : EventList["goToPage"][i] };
-        addEvent(i, obj);
-    }
 }
 function buildProyect(){
-    
+    gameCanvas = document.getElementById("game");
+    ctx = gameCanvas.getContext("2d");
+
     tileset.src = tileSetURL;
     
     canvasSizes = setCanvasSize(mapW,mapH,tileW,tileH,scale);
@@ -220,10 +206,12 @@ function buildProyect(){
 
     ctx.scale(scale,scale); //SET THE SCALE FOR THE PROJECT
 
+    generateEventsFromVar();
     setEventTypeOnHtml();
     setCurrentEventsOnHtml();
     buildOverlayButtons();
     startGame();
+    closeMenuStartGame();
 }
 function startGame(){
     for(x in tileTypes){
@@ -242,8 +230,9 @@ function startGame(){
     changeTileSpan(0);
     requestAnimationFrame(drawGame);
 
+    setPickerParams();
     //idk why this doesnt load if called instantly, and also  doesnt throw any errors
-    setTimeout(setPickerParams,500);
+    //setTimeout(setPickerParams,500);
 }
 function getFrame(sprite, duration, time, animated){
     if(!animated){

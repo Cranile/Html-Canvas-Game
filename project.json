@@ -21,9 +21,11 @@
         "4":{"22":67,"31":67,"65":90}
     },
     "events":{
-        "0":{"goToPage":{"args":["https://cranile.neocities.org/",true],"name":"Check out my Neo City" }},
-        "1":{"goToPage":{"args":["https://cranile.wordpress.com/",true],"name":"Read my blog" }},
-        "2":{"goToPage":{"args":["https://github.com/NicolasCrapanzano?tab=repositories",true],"name":"See my git repos" }},
-        "3":{"goToPage":{"args":["https://cranile.itch.io/",true],"name":"Check my itchio" }}
+        "goToPage":[ 
+            {"pos":0,"args":["https://cranile.neocities.org/",true],"name":"Check out my Neo City" }, 
+            {"pos":1,"args":["https://cranile.wordpress.com/",true],"name":"Read my blog"}, 
+            {"pos":22,"args":["https://github.com/NicolasCrapanzano?tab=repositories",true],"name":"See my git repos"}, 
+            {"pos":3,"args":["https://cranile.itch.io/",true],"name":"Check my itchio"}
+        ]
     }
 }
