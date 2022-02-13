@@ -198,7 +198,9 @@ function buildProyect(){
     ctx = gameCanvas.getContext("2d");
 
     tileset.src = tileSetURL;
-    
+    if([Object.keys(tileTypes)][0].length === 0){
+        createTileSetFromImg();
+    }
     canvasSizes = setCanvasSize(mapW,mapH,tileW,tileH,scale);
 
     changeGameMap();

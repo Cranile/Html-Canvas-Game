@@ -30,3 +30,6 @@ body {
 .block {
   display: block;
 }
+#newProject {
+  text-align: left;
+}

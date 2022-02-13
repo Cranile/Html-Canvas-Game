@@ -70,6 +70,10 @@ onsubmit = function(e){
             console.log(files);
             setupProjectFull(files)
         }
+    }else if(e.target.id === "newProject"){
+        let input = e.target.elements;
+        console.log("form data: ",input);
+        createNewProject(input.tileW.value,input.tileH.value,input.mapW.value,input.mapH.value,input.zIndex.value,input.scale.value,input.tileUrl.files);
     }
     e.preventDefault();
 }
@@ -452,18 +456,38 @@ function closeMenuStartGame(){
     document.getElementById("configContainer").style.display = "none";
     document.getElementById("mainContainer").style.display = "block";
 }
-function helpSectionSwap(newBlockId){
+function helpSectionSwap(newBlockId,section){
     if(newBlockId === undefined ){
+        console.log("new block id is undefined");
+        
+        return;
+    }
+    
+    let oldVisible = document.getElementById(section).getElementsByClassName("block");
+    let newVisible = document.getElementById(newBlockId);
+
+    
+    oldVisible[0].classList.add("none");
+    oldVisible[0].classList.remove("block");
+    
+    
+    newVisible.classList.remove("none");
+    newVisible.classList.add("block");
+}
+function newProjectSwap(newBlockId,section){
+    if(newBlockId === undefined){
         console.log("new block id is undefined");
         return;
     }
-    let oldVisible = document.getElementsByClassName("block")[0];
-    let newVisible = document.getElementById(newBlockId);
-    oldVisible.classList.remove("block");
-    oldVisible.classList.add("none");
+    let tempSection = document.getElementById(section);
+    let tempNewBlock = document.getElementById(newBlockId);
+    
+    tempNewBlock.classList.remove("block");
+    tempNewBlock.classList.add("none");
 
-    newVisible.classList.remove("none");
-    newVisible.classList.add("block");
+    tempSection.classList.remove("none");
+    tempSection.classList.add("block");
+    
 }
 //#endregion
 
@@ -531,26 +555,20 @@ function addTileOnRange(from,to,tile){
 //#region SET PROJECT DATA
 function setupProjectFull(file){
     console.log(file)
-    let projDone,imgDone,tileDone;
+    let projDone,tileDone;
     let fileRead = new FileReader();
-    let imageRead = new FileReader();
     let tileTypeRead = new FileReader();
     let gotData;
     let tileTypeData;
 
-    imageRead.readAsDataURL(file[1][0]);
-    imageRead.onload = function (){
-        tileSetURL = imageRead.result;
-        imgDone = true;
-        if(projDone === true && imgDone === true && tileDone === true ){
+    async function imgres(){
+        let a = await readFileImg(file[1][0])
+        if(projDone === true && tileSetURL != undefined && tileDone === true ){
             
             buildProyect();
         }
-    };
-    imageRead.onerror = function() {
-        alert(imageRead.error);
-        return;
-    };
+    }
+    imgres();
 
     fileRead.readAsText(file[0][0]);
     fileRead.onload = function() {
@@ -570,7 +588,7 @@ function setupProjectFull(file){
 
         tempLevels = gotData.zContent;
         projDone = true;
-        if(projDone === true && imgDone === true && tileDone === true ){
+        if(projDone === true && tileSetURL != undefined && tileDone === true ){
             
             buildProyect();
         }
@@ -587,7 +605,7 @@ function setupProjectFull(file){
 
         tileTypes = tileTypeData;
         tileDone = true;
-        if(projDone === true && imgDone === true && tileDone === true ){
+        if(projDone === true && tileSetURL != undefined && tileDone === true ){
             
             buildProyect();
         }
@@ -599,6 +617,24 @@ function setupProjectFull(file){
     
     
 }
+function readFileImg(file){
+    console.log("readimg: ",file);
+    let imageRead = new FileReader();
+    return new Promise(resolve => {
+    imageRead.readAsDataURL(file);
+    imageRead.onload = function (){
+        tileSetURL = imageRead.result;
+        
+        resolve (true);
+    };
+    imageRead.onerror = function() {
+        alert(imageRead.error);
+
+        resolve (false);
+    };
+    });
+}
+
 function setCanvasSize(mapW,mapH,TilesW,TilesH,scale){
     let canvasW = (mapW * TilesW) * scale;
     let canvasH = (mapH * TilesH) * scale;
@@ -615,7 +651,7 @@ function createTileSetFromImg(){
     let totalTiles = ammounTileH * ammounTileW;
     for(let y = 0; y < ammounTileH ; y++){
         for(let x = 0; x < ammounTileW ; x++){
-            tileTypesTest[toIndex(x,y,ammounTileW)] =  { name:"name "+toIndex(x,y,ammounTileW) , floor:floorType.path, 
+            tileTypes[toIndex(x,y,ammounTileW)] =  { name:"name "+toIndex(x,y,ammounTileW) , floor:floorType.path, 
                 sprite:[{x:x*tileW,y:y*tileH,w:tileW,h:tileH}] , colour:"#999999"
             }
         }
@@ -707,6 +743,33 @@ function createEmptyProject(mapw,maph,tilesh,tilesw){
     gameCanvas = document.getElementById("game");
     ctx = gameCanvas.getContext("2d");
 }
+
+function createNewProject(tilew,tileh,mapw,maph,zindex,scaleLocal,img){
+    console.log("recieved data: ",tilew,tileh,mapw,maph,zindex,scale);
+    if(scaleLocal === undefined){
+        scale = 1;
+        console.log("scale not set");
+    }else{
+        scale = scaleLocal;
+    }
+    tileW = tilew;
+    tileH = tileh;
+    mapW = mapw;
+    mapH = maph;
+    zLevels = zindex;
+
+    gameMap = generateGameMap(mapW,mapH);
+    
+    async function imgres(){
+        let a = await readFileImg(img[0])
+        if(a === true){
+            buildProyect();
+        }else{
+            console.log("error img couldnt be loaded");
+        }
+    }
+    imgres();
+}
 //#endregion
 
 //#region HAS DATA OR GET DATA
@@ -772,6 +835,9 @@ function addEvent(tileCoords,event){
     
 }
 function generateEventsFromVar(){
+    if([Object.keys(EventList)][0].length === 0){
+        return;
+    }
     for(let i = 0 ; i < EventList["goToPage"].length ; i++){
         let obj = {};
         obj = { [Object.keys(EventList)] : EventList["goToPage"][i] };

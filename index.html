@@ -13,7 +13,7 @@
         <div id="" style="background-color:wheat; padding: 5px; border: black 1px solid;text-align: center;">
             <h3>Welcome To The Developer Mode:</h3>
             <h4>Set up your project settings</h4>
-            <div class="padding5" style="background-color:burlywood;border:black 1px solid;display: grid;grid-template-columns: auto auto auto;grid-column-gap: 1vw;">
+            <div class="padding5" style="background-color:burlywood;border:black 1px solid;display: grid;grid-template-columns: auto auto ;grid-column-gap: 1vw;">
 
                 <div style="flex: 50%; border:black 1px solid;background-color: darksalmon;">
                     <form action="" id="fullProjectForm">
@@ -34,43 +34,58 @@
                         </div>
                         <button class="margin5" onsubmit="" >Load from Project File</button>
                     </form>
-                    <button class="margin5" onclick="helpSectionSwap('FullProjHelp')">?</button>
+                    <button class="margin5" onclick="helpSectionSwap('FullProjHelp','help')">?</button>
                 </div>
                 
-                <div style="flex: 50%;border:black 1px solid;background-color: darksalmon;">
-                    <button class="margin5">Start from the ground up.</button>
-                    <br>
-                    <button class="margin5" onclick="setupProject()">Start with example project.</button>
-                    <br>
-                    <button class="margin5" onclick="helpSectionSwap('groundUpHelp')">?</button>
-                </div>
-                
-                <div style="flex: 100%;border:black 1px solid;background-color: darksalmon;">
-                    <div class="padding5" id="partialProject" >
-                        <div>
-                                <input type="file" name="" id="" class="margin5" required>
-                                <br>
-                                <label for="">Add the .json file with map data</label>
-                            </div>
-                            <div>
-                                <input type="file" name="" id="" class="margin5" required>
-                                <br>
-                                <label for="">Add the .json file with Z layers data</label>
-                            </div>
-                            <div>
-                                <input type="file" name="" id="" class="margin5" required>
-                                <br>
-                                <label for="">Add the .json file with events data</label>
-                            </div>
-                            <div>
-                                <input type="file" name="" id="" class="margin5" required>
-                                <br>
-                                <label for="">Add the .json file with settings data</label>
-                            </div>
+                <div  id="newSetupSection" style="flex: 50%;border:black 1px solid;background-color: darksalmon;">
+                    <div id="newSetupButtons" class="block">
+                        <button class="margin5" onclick="newProjectSwap('newSetupButtons','newProject')">Start from the ground up.</button>
+                        <br>
+                        <button class="margin5" onclick="setupProject()">Start with example project.</button>
+                        <br>
                     </div>
-                    <button class="margin5">Start with partial project Files</button>
-                    <button class="margin5" onclick="helpSectionSwap('PartialProjHelp')">?</button>
+                    <form action="" id="newProject" class="none" style="">
+                        <label for="tileH">Tiles height (In Pixels)</label>
+                        <br>
+                        <input type="number" id="tileH" name="tileH" required>
+                        <br>
+                    
+                        <label for="tileW">Tiles width (In Pixels)</label>
+                        <br>
+                        <input type="number" id="tileW" name="tileW" required>
+                        <br>
+                    
+                        <label for="mapH">Map height (In tiles)</label>
+                        <br>
+                        <input type="number" id="mapH" name="mapH" required>
+                        <br>
+                    
+                        <label for="mapW">Map width (In tiles)</label>
+                        <br>
+                        <input type="number" id="mapW" name="mapW" required>
+                        <br>
+                    
+                        <label for="zIndex">Ammount of Z layers("tall/stacked" tiles)</label>
+                        <br>
+                        <input type="number" id="zIndex" name="zIndex" required>
+                        <br>
+                    
+                        <label for="scale">Scale (Optional)</label>
+                        <br>
+                        <input type="number" id="scale" name="scale">
+                        <br>
+
+                        <label for="tileUrl">Add the tileset image</label>
+                        <br>
+                        <input type="file" accept="image/*" name="tileUrl" id="tileUrl" class="margin5" required>
+                        <br>
+                        <button class="margin5" type="submit">Done</button>
+                        <button type="button" onclick="">Back</button>
+                    </form>
+
+                    <button class="margin5" onclick="helpSectionSwap('groundUpHelp','help')">?</button>
                 </div>
+                
             </div>
             <br>
             <div id="help" style="background-color: cadetblue;border:black 3px solid;padding: 5px;">
