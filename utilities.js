@@ -169,15 +169,58 @@ function getMouseBtn(e){
 //#region FETCH DATA 
 function fetchFile(filePath){
     let tempSave;
+    
     fetch(filePath)
     .then(res => {
+        console.log(res);
         return res.json();
     })
     .then(jsonData => {
-        tempSave = jsonData;
+        //fetch should return data, and this beahaviour must happen on another function
+        console.log(jsonData);
+        gameMap = jsonData.map;
+
+        if(jsonData.zContent){
+            tempLevels = jsonData.zContent;
+        }
     }).catch(function(error){
+        console.log(error);
         window.alert("Error proyect parameters couldnt be loaded",error);
     });
+    
+}
+function fetchNewMap(filePath){
+    fetch(filePath)
+    .then(res => {        
+        return res.json();
+    })
+    .then(jsonData => {
+        //fetch should return data, and this beahaviour must happen on another function
+        console.log(jsonData);        
+        changeGameMap(jsonData.map);
+
+        if(jsonData.zContent){
+            console.log("has layers");
+            setNewLayers(jsonData.zContent);
+        }else{
+            zContents = new Map();
+        }
+
+        if(jsonData.events){
+            EventList = jsonData.events;
+            generateEventsFromVar();
+        }else{
+            EventList = new Map();
+            events.clear();
+        }
+        buildOverlayButtons();
+        setCurrentEventsOnHtml();
+
+    }).catch(function(error){
+        console.log(error);
+        window.alert("Error proyect parameters couldnt be loaded",error);
+    });
+    
 }
 
 
@@ -866,15 +909,32 @@ function getMultipleParam(parameter){
     return tempParams;
 }
 
-function changeGameMap(){
-    
-    if(gameMap.length <= 0){
-        gameMap = generateGameMap(mapW,mapH);
+function changeGameMap(newMap){
+    let temp;
+    if(newMap != undefined){
+        temp = newMap
+    }else{
+        temp = gameMap;
     }
-    gameMapData = gameMap.slice(0);
+    console.log(temp);
+    gameMapData = temp.slice(0);
 }
-function loadMapArea(){
+function setNewLayers(newLevels){
+    let temp;
+    if(newLevels != undefined){
+        temp = newLevels;
+    }else{
+        temp = tempLevels;
+    }
+    zContents = jsonToMap(temp,1);
+}
 
+function changeMap(newMapPath,transition){
+    //this is async, make the set functions wait for fetch
+    if(transition != undefined){
+        console.log("transition ",transition," was called. . .");
+    }
+    fetchNewMap(newMapPath);
 }
 function toggleTileNum(){
     showTileNum = !showTileNum;

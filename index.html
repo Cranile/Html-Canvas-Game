@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    
     <link rel="stylesheet" href="style.css">
     <title>Game</title>
 </head>
@@ -124,6 +124,7 @@
     </div>
     <div id="mainContainer" style="display: none;">
         <canvas id="game" onmouseenter="mouseEnterCanvas('game')" onmouseleave="mouseLeaveCanvas('game',event)" width="100" height="100" style="display: inline;float:left;border: 1px solid black;"></canvas>
+        <!-- Sections -->
         <div style="display: inline;float:left;">
             <div>
                 <div style="margin-left: 10px;">
@@ -139,6 +140,8 @@
                     <button onclick="enableHtmlSection('eventsDiv')">Events</button>
                     <br>
                     <button onclick="toggleTileNum()">Show/Hide tile positions</button>
+                    <br>
+                    <button onclick="enableHtmlSection('settings')">Settings</button>
                     <div id="zIndexDiv" style="background-color:wheat; padding: 5px; border: black 1px solid;display: none;">
                         <h3>select Z index:</h3>
                         <div style="background-color:burlywood;border:black 1px solid;">
@@ -213,6 +216,63 @@
                             <button onclick="displayEventOverlay()">Show events Overlay</button>
                             <button onclick="hideEventOverlay()">Hide events Overlay</button>
                         </div>
+                    </div>
+                    <div id="settings" style="background-color:wheat; padding: 5px; border: black 1px solid;display: none;">
+                        <h5>Change the settings of the project:</h5>
+                        <form action="" id="projectSettings" class="" style="">
+                            <label for="tileH">Tiles height (In Pixels)</label>
+                            <br>
+                            <input type="number" id="tileH" name="tileH" >
+                            <br>
+                        
+                            <label for="tileW">Tiles width (In Pixels)</label>
+                            <br>
+                            <input type="number" id="tileW" name="tileW" >
+                            <br>
+                        
+                            <label for="mapH">Map height (In tiles)</label>
+                            <br>
+                            <input type="number" id="mapH" name="mapH" >
+                            <br>
+                        
+                            <label for="mapW">Map width (In tiles)</label>
+                            <br>
+                            <input type="number" id="mapW" name="mapW" >
+                            <br>
+                        
+                            <label for="zIndex">Ammount of Z layers("tall/stacked" tiles)</label>
+                            <br>
+                            <input type="number" id="zIndex" name="zIndex" >
+                            <br>
+                        
+                            <label for="scale">Scale</label>
+                            <br>
+                            <input type="number" id="scale" name="scale">
+                            <br>
+
+                            <label for="canvasRes">Canvas Resolution</label>
+                            <br>
+                            <input type="text" id="canvasRes" name="canvasRes" disabled>
+                            <br>
+                        
+                            <label for="tileUrl">Add the tileset image</label>
+                            <br>
+                            <input type="file" accept="image/*" name="tileUrl" id="tileUrl" class="margin5" required disabled>
+                            <br>
+
+                            <label for="pickerMapH">Tile picker map height (In tiles)</label>
+                            <br>
+                            <input type="number" id="pickerMapH" name="pickerMapH">
+                            <br>
+                            
+                            <label for="pickerMapW">Tile picker map width (In tiles)</label>
+                            <br>
+                            <input type="number" id="pickerMapW" name="pickerMapW">
+                            <br>
+                            
+                            <button class="margin5" type="submit">Done</button>
+                            <button type="button" onclick="">Back</button>
+                        </form>
                     </div>
                 </div>
         

@@ -207,7 +207,7 @@ function buildProyect(){
     
     setLayers();
     if(tempLevels != undefined){
-        zContents = jsonToMap(tempLevels,1);
+        setNewLayers()
     }
     
 
