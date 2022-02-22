@@ -3,7 +3,6 @@
 //#region DOM Events
 onwheel = function(e){
     if (elementHover != "blockPick"){
-        //console.log("not in picker go back");
         return;
     }
     let direction = null;
@@ -46,7 +45,6 @@ oncontextmenu = function(e){
     e.preventDefault();
 }
 onmousedown = function(e){
-    //console.log(e);
     getClickContext(e);
 }
 onsubmit = function(e){
@@ -823,13 +821,13 @@ function hasEvent(tile){
     }
 }
 function findEvent(event){
-    console.log("event lookup");
+    //console.log("event lookup");
     if( event["goToPage"] != undefined ){
         goToPage(event["goToPage"]["args"][0],event["goToPage"]["args"][1]);
     }else if( event["details"] != undefined  ){
 
     }else if( event["changeMap"] != undefined ){
-        console.log(event["changeMap"]["args"][0]);
+        
         changeMap(event["changeMap"]["args"][0]);
     }else{
         console.log("event not found",event);
@@ -922,7 +920,7 @@ function changeGameMap(newMap){
     }else{
         temp = gameMap;
     }
-    console.log(temp);
+    
     gameMapData = temp.slice(0);
 }
 function setNewLayers(newLevels){
@@ -948,7 +946,7 @@ function toggleTileNum(){
 
 // MADE ALTERNATIVE VERSION, THAT CREATES A WINDOW ON HTML ASKING THE USER IF THEY WANT TO GO TO ANOTHER PAGE, (WITH FLAVOR TEXT)
 function goToPage(link,newTab){
-    console.log(link,newTab);
+    
     let a = document.createElement('a');
     a.href = link;
     if (!newTab){

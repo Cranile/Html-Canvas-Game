@@ -243,9 +243,9 @@ function startGame(){
     changeTileSpan(0);
     requestAnimationFrame(drawGame);
 
-    setPickerParams();
+    //setPickerParams();
     //idk why this doesnt load if called instantly, and also  doesnt throw any errors
-    //setTimeout(setPickerParams,500);
+    setTimeout(setPickerParams,500);
 }
 function getFrame(sprite, duration, time, animated){
     if(!animated){
