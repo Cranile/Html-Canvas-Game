@@ -13,6 +13,7 @@
         <div id="" style="background-color:wheat; padding: 5px; border: black 1px solid;text-align: center;">
             <h3>Welcome To The Developer Mode:</h3>
             <h4>Set up your project settings</h4>
+            <button><a href="./credits.html" target="_blank">See Credits</a></button>
             <div class="padding5" style="background-color:burlywood;border:black 1px solid;display: grid;grid-template-columns: auto auto ;grid-column-gap: 1vw;">
 
                 <div style="flex: 50%; border:black 1px solid;background-color: darksalmon;">
@@ -141,6 +142,7 @@
                     <br>
                     <button onclick="toggleTileNum()">Show/Hide tile positions</button>
                     <br>
+                    <button onclick="enableHtmlSection('LoadMap')">Load New Nap</button>
                     <button onclick="enableHtmlSection('settings')">Settings</button>
                     <div id="zIndexDiv" style="background-color:wheat; padding: 5px; border: black 1px solid;display: none;">
                         <h3>select Z index:</h3>
@@ -188,10 +190,22 @@
                             <button onclick="readExistingEvent()"> Read </button>
                             <button onclick="modifyExistingEvent()"> Modify </button>
                             <form id="readEvent" >
+                                <label for="eventName">Flavour text</label>
+                                <br>
                                 <input name="eventName" type="text" placeholder="Event Name" readonly>
+                                
+                                <br>
+                                <label for="eventTile">Event Position on map</label>
+                                <br>
                                 <input name="eventTile" type="number" placeholder="Event Position" readonly>
+                                
+                                <br>
+                                <label for="eventType">Event Type</label>
                                 <br>
                                 <input name="eventType" type="text" placeholder="Event Type" readonly>
+                                
+                                <br>
+                                <label for="eventArgs">Event arguments</label>
                                 <br>
                                 <input name="eventArgs" type="text" placeholder="Event Parameters" size="50" >
                                 
@@ -272,6 +286,15 @@
                             
                             <button class="margin5" type="submit">Done</button>
                             <button type="button" onclick="">Back</button>
+                        </form>
+                    </div>
+                    <div id="LoadMap" style="background-color:wheat; padding: 5px; border: black 1px solid;display: none;">
+                        <form action="" id="loadMap">
+                            <label for="localMapPath">Map Path(Must be loaded on server)</label>
+                            <br>
+                            <input type="text" id="localMapPath" name="localMapPath">
+                            <br>
+                            <button type="submit">Load</button>
                         </form>
                     </div>
                 </div>

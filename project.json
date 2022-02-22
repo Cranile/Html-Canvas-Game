@@ -26,6 +26,9 @@
             {"pos":1,"args":["https://cranile.wordpress.com/",true],"name":"Read my blog"}, 
             {"pos":22,"args":["https://github.com/NicolasCrapanzano?tab=repositories",true],"name":"See my git repos"}, 
             {"pos":3,"args":["https://cranile.itch.io/",true],"name":"Check my itchio"}
+        ],
+        "changeMap":[
+            {"pos":5,"args":["./maps/New.json"],"name":"Go to the castle"}
         ]
     }
 }

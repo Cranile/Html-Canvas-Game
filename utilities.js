@@ -1,6 +1,6 @@
 
 
-//#region Events
+//#region DOM Events
 onwheel = function(e){
     if (elementHover != "blockPick"){
         //console.log("not in picker go back");
@@ -74,6 +74,10 @@ onsubmit = function(e){
         let input = e.target.elements;
         console.log("form data: ",input);
         createNewProject(input.tileW.value,input.tileH.value,input.mapW.value,input.mapH.value,input.zIndex.value,input.scale.value,input.tileUrl.files);
+    }else if(e.target.id === "loadMap"){
+        let input = e.target.elements.localMapPath.value;
+        console.log(input);
+        changeMap(input);
     }
     e.preventDefault();
 }
@@ -172,17 +176,11 @@ function fetchFile(filePath){
     
     fetch(filePath)
     .then(res => {
-        console.log(res);
+        
         return res.json();
     })
     .then(jsonData => {
-        //fetch should return data, and this beahaviour must happen on another function
-        console.log(jsonData);
-        gameMap = jsonData.map;
-
-        if(jsonData.zContent){
-            tempLevels = jsonData.zContent;
-        }
+        tempSave = jsonData;
     }).catch(function(error){
         console.log(error);
         window.alert("Error proyect parameters couldnt be loaded",error);
@@ -190,6 +188,7 @@ function fetchFile(filePath){
     
 }
 function fetchNewMap(filePath){
+    console.log(filePath);
     fetch(filePath)
     .then(res => {        
         return res.json();
@@ -206,12 +205,12 @@ function fetchNewMap(filePath){
             zContents = new Map();
         }
 
+        EventList = new Map();
+        events.clear();
+
         if(jsonData.events){
             EventList = jsonData.events;
             generateEventsFromVar();
-        }else{
-            EventList = new Map();
-            events.clear();
         }
         buildOverlayButtons();
         setCurrentEventsOnHtml();
@@ -829,6 +828,9 @@ function findEvent(event){
         goToPage(event["goToPage"]["args"][0],event["goToPage"]["args"][1]);
     }else if( event["details"] != undefined  ){
 
+    }else if( event["changeMap"] != undefined ){
+        console.log(event["changeMap"]["args"][0]);
+        changeMap(event["changeMap"]["args"][0]);
     }else{
         console.log("event not found",event);
     }
@@ -878,13 +880,17 @@ function addEvent(tileCoords,event){
     
 }
 function generateEventsFromVar(){
+    
     if([Object.keys(EventList)][0].length === 0){
         return;
     }
-    for(let i = 0 ; i < EventList["goToPage"].length ; i++){
-        let obj = {};
-        obj = { [Object.keys(EventList)] : EventList["goToPage"][i] };
-        addEvent(EventList["goToPage"][i].pos, obj);
+    
+    for(j = 0; j < Object.keys(EventList).length ; j++){
+        for(let i = 0 ; i < EventList[ eventTypes[j] ].length ; i++){
+            let obj = {};
+            obj = { [Object.keys(EventList)[j]] : EventList[ eventTypes[j] ][i] };
+            addEvent(EventList[ eventTypes[j] ][i].pos, obj);
+        }
     }
 }
 //#endregion
