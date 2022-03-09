@@ -956,6 +956,24 @@ function goToPage(link,newTab){
     }
     a.click();
 }
+// the positions
+function openNewWindow(winName,winContent,winWidth,winHeight,newWinURL,leftPos,topPos){
+    let newWindow, newWindowUrl = "";
+    let winParams = "width="+winWidth+","+"height="+winHeight;
+    if(leftPos != undefined ){
+        winParams +=","+"screenX="+leftPos;
+    }
+    if(topPos != undefined){
+        winParams += ","+"screenY="+topPos;
+    }
+    if(newWinURL != undefined){
+        
+        newWindowUrl = newWinURL
+    }
+    //Window URL not working for some reason
+    newWindow = window.open(newWindowUrl,winName,winParams)
+    newWindow.document.write(winContent);
+}
 
 function isColliding(myElement,otherElement){
     let originX = myElement.x;
