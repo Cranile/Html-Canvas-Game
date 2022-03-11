@@ -121,10 +121,9 @@ function getClickContext(e){
             hasEvent(tiles);
             return;
         }
-        console.log(getMouseBtn(e));
+        
         if(getMouseBtn(e) === "right"){
             //TODO: make a context menu appear if there is multiple layers
-            console.log(tiles[0],tiles[1], mapW);
             getLayersAmmount(tiles[0],tiles[1], mapW)
             return;
         }else if(getMouseBtn(e) === "mid"){

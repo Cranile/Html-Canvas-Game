@@ -296,12 +296,17 @@ function drawGame(){
                 if(z === 0){
                     
                     var tile = tileTypes[gameMapData[toIndex(x,y, mapW)]];
-                    let sprite = getFrame(tile.sprite, tile.spriteDuration, currentFrameTime, tile.animated);
-                    ctx.drawImage(tileset,
-                        sprite.x, sprite.y, sprite.w, sprite.h,
-                        (x*tileW),  (y*tileH),
-                        tileW, tileH);
-                    
+                    if(tile.sprite === "none"){                        
+                        ctx.rect((x*tileW),(y*tileH),tileW, tileH);
+                        ctx.fillStyle = tile.colour;
+                        ctx.fill();
+                    }else{
+                        let sprite = getFrame(tile.sprite, tile.spriteDuration, currentFrameTime, tile.animated);
+                        ctx.drawImage(tileset,
+                            sprite.x, sprite.y, sprite.w, sprite.h,
+                            (x*tileW),  (y*tileH),
+                            tileW, tileH);
+                    }
                 }
                 
                 if(zContents.size > 0 && zContents.get(z) ){
