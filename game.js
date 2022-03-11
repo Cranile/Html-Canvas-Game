@@ -321,7 +321,7 @@ function drawGame(){
                 if(showTileNum){
                     ctx.font = "bold 5pt sans-serif";
                     ctx.fillStyle = "#ff0000";
-                    ctx.fillText(toIndex(x,y, mapW),(x*tileW) +10 , (y*tileH)+14);
+                    ctx.fillText(toIndex(x,y, mapW),(x*tileW) + (tileW/3) , (y*tileH) + (tileH/2));
                 }
             }
         }
