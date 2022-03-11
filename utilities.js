@@ -121,8 +121,10 @@ function getClickContext(e){
             hasEvent(tiles);
             return;
         }
+        console.log(getMouseBtn(e));
         if(getMouseBtn(e) === "right"){
             //TODO: make a context menu appear if there is multiple layers
+            console.log(tiles[0],tiles[1], mapW);
             getLayersAmmount(tiles[0],tiles[1], mapW)
             return;
         }else if(getMouseBtn(e) === "mid"){
@@ -456,7 +458,8 @@ function buildOverlayButtons(){
         eventParams = events.get(currValue);
         style = "left:"+(currentPos[0]*tileW) * scale +"px";
         style += ";top:"+(currentPos[1]*tileH) * scale+"px";
-        
+        style += ";width:" + tileW * scale+ "px";
+        style += ";height:" + tileH * scale+ "px";
         // check if the event has a custom pointer or none at all
         //if( eventParams[ Object.keys( eventParams ) ].args.pointer != undefined ){
         //    console.log("test");
@@ -838,10 +841,14 @@ function getLayersAmmount(x,y, mapW){
     
     for(i = zLevels; i >= 1; i-- ){
         
-        if( zContents.get(i)[tile] != undefined ){
-            removeLayeredObj(tile,i);
-            return;
-        }else if(i === 1){
+        if(zContents.get(i) !== undefined){
+            if( zContents.get(i)[tile] != undefined ){
+                
+                removeLayeredObj(tile,i);
+                return;
+            }
+        }
+        if(i === 1){
             
             removeTile(x,y,mapW);
             return;

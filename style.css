@@ -11,8 +11,6 @@ body {
   margin: 8px;
 }
 .canvasOverlayBtn {
-  height: 64px;
-  width: 64px;
   position: absolute;
   cursor: pointer;
   border: 0;
